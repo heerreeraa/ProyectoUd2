@@ -23,6 +23,11 @@ public class Validador {
         return LETRAS_DNI.charAt(resto) == letra;
     }
 
+    // CIF: una letra de tipo de entidad, 7 cifras y un carácter de control (G01234567)
+    public static boolean esCifValido(String cif) {
+        return cif.matches("[ABCDEFGHJNPQRSUVW][0-9]{7}[0-9A-J]");
+    }
+
     public static boolean esEmailValido(String email) {
         return email.matches("[^@\\s]+@[^@\\s]+\\.[^@\\s]+");
     }

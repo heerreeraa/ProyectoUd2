@@ -118,6 +118,22 @@ public class Teclado {
         }
     }
 
+    // Para modificar: si se deja vacío se queda la hora actual
+    public static String leerHoraOpcional(String mensaje, String actual) {
+        while (true) {
+            String texto = leerLinea(mensaje + " [" + actual + "]: ");
+            if (texto.isEmpty()) {
+                return actual;
+            }
+            try {
+                LocalTime.parse(texto);
+                return texto;
+            } catch (DateTimeParseException e) {
+                System.out.println("Hora no válida. Ejemplo: 18:30");
+            }
+        }
+    }
+
     // Para modificar textos: si se deja vacío se queda el valor actual
     public static String leerTextoOpcional(String mensaje, String actual) {
         String texto = leerLinea(mensaje + " [" + actual + "]: ");
