@@ -3,6 +3,9 @@ package org.example.export;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.thoughtworks.xstream.XStream;
+import org.example.estadisticas.EstadisticasAsociacion;
+import org.example.estadisticas.HistoricoSocia;
+import org.example.estadisticas.LineaHistorico;
 import org.example.metadatos.InfoBBDD;
 import org.example.metadatos.InfoColumna;
 import org.example.metadatos.InfoTabla;
@@ -36,11 +39,13 @@ public class Exportador {
             xstream.alias("tabla", InfoTabla.class);
             xstream.alias("columna", InfoColumna.class);
             xstream.alias("metadatos", MetadatosCompletos.class);
-            // XStream trata cualquier ArrayList como List, así que el alias de la raíz va sobre List
+            xstream.alias("historico", HistoricoSocia.class);
+            xstream.alias("linea", LineaHistorico.class);
+            xstream.alias("estadisticas", EstadisticasAsociacion.class);
+            // En las listas la raíz se llama como el fichero (<juegos>). XStream trata cualquier
+            // ArrayList como List, así que el alias va sobre List. Un objeto suelto usa su propio alias
             if (datos instanceof List) {
                 xstream.alias(nombre, List.class);
-            } else {
-                xstream.alias(nombre, datos.getClass());
             }
 
             escribirFichero(xstream.toXML(datos), nombre + ".xml");

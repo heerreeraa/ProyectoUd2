@@ -23,6 +23,7 @@ public class MenuPrincipal {
             System.out.println("4. Datos de la asociación");
             System.out.println("5. Metadatos de la base de datos");
             System.out.println("6. Usuarios y registro de sesiones");
+            System.out.println("7. Estadísticas");
             System.out.println("0. Salir");
             opcion = Teclado.leerEntero("Elige una opción: ");
 
@@ -44,6 +45,9 @@ public class MenuPrincipal {
                     break;
                 case 6:
                     MenuUsuarios.mostrar();
+                    break;
+                case 7:
+                    MenuEstadisticas.mostrar();
                     break;
                 case 0:
                     System.out.println("¡Hasta pronto!");
