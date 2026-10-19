@@ -61,6 +61,44 @@ public class SociaDaoImpl implements SociaDao {
         return socias;
     }
 
+    // Búsqueda por varios criterios: los que vienen vacíos (o -1) no se usan
+    @Override
+    public List<Socia> buscar(String nombre, String apellidos, int edadMinima, int edadMaxima) throws SQLException {
+        String query = "select * from socia where eliminada = false";
+        ArrayList<Object> parametros = new ArrayList<>();
+        if (!nombre.isEmpty()) {
+            query += " and nombre like ?";
+            parametros.add("%" + nombre + "%");
+        }
+        if (!apellidos.isEmpty()) {
+            query += " and apellidos like ?";
+            parametros.add("%" + apellidos + "%");
+        }
+        if (edadMinima != -1) {
+            query += " and edad >= ?";
+            parametros.add(edadMinima);
+        }
+        if (edadMaxima != -1) {
+            query += " and edad <= ?";
+            parametros.add(edadMaxima);
+        }
+        query += " order by apellidos, nombre";
+
+        PreparedStatement ps = ConexionBD.getInstance().getConnection().prepareStatement(query);
+        // Se rellenan los ? en el mismo orden en que se han añadido
+        for (int i = 0; i < parametros.size(); i++) {
+            ps.setObject(i + 1, parametros.get(i));
+        }
+        ResultSet rs = ps.executeQuery();
+        List<Socia> socias = new ArrayList<>();
+        while (rs.next()) {
+            socias.add(crearSocia(rs));
+        }
+        rs.close();
+        ps.close();
+        return socias;
+    }
+
     // El DNI no se modifica porque es la clave primaria
     @Override
     public int modificar(Socia socia) throws SQLException {

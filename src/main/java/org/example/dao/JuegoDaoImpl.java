@@ -58,6 +58,48 @@ public class JuegoDaoImpl implements JuegoDao {
         return ejecutarLista(ps);
     }
 
+    // Búsqueda por varios criterios: los que vienen vacíos (o -1) no se usan
+    @Override
+    public List<Juego> buscar(String nombre, String tematica, String tipo, int jugadoras, int duracionMaxima,
+                              String estado) throws SQLException {
+        String query = "select * from juego where eliminado = false";
+        ArrayList<Object> parametros = new ArrayList<>();
+        if (!nombre.isEmpty()) {
+            query += " and nombre like ?";
+            parametros.add("%" + nombre + "%");
+        }
+        if (!tematica.isEmpty()) {
+            query += " and tematica like ?";
+            parametros.add("%" + tematica + "%");
+        }
+        if (!tipo.isEmpty()) {
+            query += " and tipo = ?";
+            parametros.add(tipo);
+        }
+        // Juegos en los que se puede jugar con ese número de jugadoras
+        if (jugadoras != -1) {
+            query += " and min_jugadores <= ? and max_jugadores >= ?";
+            parametros.add(jugadoras);
+            parametros.add(jugadoras);
+        }
+        if (duracionMaxima != -1) {
+            query += " and duracion <= ?";
+            parametros.add(duracionMaxima);
+        }
+        if (!estado.isEmpty()) {
+            query += " and estado = ?";
+            parametros.add(estado);
+        }
+        query += " order by nombre";
+
+        PreparedStatement ps = ConexionBD.getInstance().getConnection().prepareStatement(query);
+        // Se rellenan los ? en el mismo orden en que se han añadido
+        for (int i = 0; i < parametros.size(); i++) {
+            ps.setObject(i + 1, parametros.get(i));
+        }
+        return ejecutarLista(ps);
+    }
+
     @Override
     public int modificar(Juego juego) throws SQLException {
         String query = "update juego set nombre = ?, autores = ?, descripcion = ?, min_jugadores = ?, max_jugadores = ?, "

@@ -34,6 +34,7 @@ public class MenuSocias {
             System.out.println("6. Baja de socia");
             System.out.println("7. Reactivar socia dada de baja");
             System.out.println("8. Exportar socias");
+            System.out.println("9. Buscar socias");
             System.out.println("0. Volver");
             opcion = Teclado.leerEntero("Elige una opción: ");
 
@@ -64,6 +65,9 @@ public class MenuSocias {
                     case 8:
                         MenuExportar.exportar(sociaDao.listar(false), "socias");
                         break;
+                    case 9:
+                        buscar();
+                        break;
                     case 0:
                         break;
                     default:
@@ -85,6 +89,24 @@ public class MenuSocias {
             System.out.println(s);
         }
         System.out.println("Total: " + socias.size());
+    }
+
+    private static void buscar() throws SQLException {
+        System.out.println("Rellena solo los criterios que quieras usar (Enter para saltar).");
+        String nombre = Teclado.leerTextoOpcional("Nombre (o parte): ");
+        String apellidos = Teclado.leerTextoOpcional("Apellidos (o parte): ");
+        int edadMinima = Teclado.leerEnteroOVacio("Edad mínima: ", 0, 120);
+        int edadMaxima = Teclado.leerEnteroOVacio("Edad máxima: ", 0, 120);
+
+        List<Socia> socias = sociaDao.buscar(nombre, apellidos, edadMinima, edadMaxima);
+        if (socias.isEmpty()) {
+            System.out.println("No hay ninguna socia con esos criterios.");
+            return;
+        }
+        for (Socia s : socias) {
+            System.out.println(s);
+        }
+        System.out.println("Encontradas: " + socias.size());
     }
 
     private static void verFicha() throws SQLException {

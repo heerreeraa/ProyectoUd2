@@ -39,6 +39,7 @@ public class MenuPartidas {
             System.out.println("10. Baja de partida");
             System.out.println("11. Reactivar partida dada de baja");
             System.out.println("12. Exportar partidas");
+            System.out.println("13. Buscar partidas");
             System.out.println("0. Volver");
             opcion = Teclado.leerEntero("Elige una opción: ");
 
@@ -80,6 +81,9 @@ public class MenuPartidas {
                     case 12:
                         MenuExportar.exportar(partidaDao.listar(false), "partidas");
                         break;
+                    case 13:
+                        buscar();
+                        break;
                     case 0:
                         break;
                     default:
@@ -101,6 +105,28 @@ public class MenuPartidas {
             System.out.println(p);
         }
         System.out.println("Total: " + partidas.size());
+    }
+
+    private static void buscar() throws SQLException {
+        System.out.println("Rellena solo los criterios que quieras usar (Enter para saltar).");
+        String juego = Teclado.leerTextoOpcional("Nombre del juego (o parte): ");
+        String desde = Teclado.leerFechaOVacio("Desde la fecha");
+        String hasta = Teclado.leerFechaOVacio("Hasta la fecha");
+        while (!desde.isEmpty() && !hasta.isEmpty() && LocalDate.parse(hasta).isBefore(LocalDate.parse(desde))) {
+            System.out.println("La fecha final no puede ser anterior a la inicial.");
+            hasta = Teclado.leerFechaOVacio("Hasta la fecha");
+        }
+        boolean soloConPlazas = Teclado.leerSiNo("¿Solo partidas con plazas libres?");
+
+        List<Partida> partidas = partidaDao.buscar(juego, desde, hasta, soloConPlazas);
+        if (partidas.isEmpty()) {
+            System.out.println("No hay ninguna partida con esos criterios.");
+            return;
+        }
+        for (Partida p : partidas) {
+            System.out.println(p);
+        }
+        System.out.println("Encontradas: " + partidas.size());
     }
 
     private static void verPartida() throws SQLException {

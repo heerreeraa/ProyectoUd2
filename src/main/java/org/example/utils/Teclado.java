@@ -102,6 +102,41 @@ public class Teclado {
         }
     }
 
+    // Para búsquedas: devuelve -1 si se deja vacío (criterio que no se usa)
+    public static int leerEnteroOVacio(String mensaje, int min, int max) {
+        while (true) {
+            String texto = leerLinea(mensaje);
+            if (texto.isEmpty()) {
+                return -1;
+            }
+            try {
+                int numero = Integer.parseInt(texto);
+                if (numero >= min && numero <= max) {
+                    return numero;
+                }
+                System.out.println("El número tiene que estar entre " + min + " y " + max + ".");
+            } catch (NumberFormatException e) {
+                System.out.println("Tienes que escribir un número entero.");
+            }
+        }
+    }
+
+    // Para búsquedas: devuelve "" si se deja vacío
+    public static String leerFechaOVacio(String mensaje) {
+        while (true) {
+            String texto = leerLinea(mensaje + " (aaaa-mm-dd): ");
+            if (texto.isEmpty()) {
+                return texto;
+            }
+            try {
+                LocalDate.parse(texto);
+                return texto;
+            } catch (DateTimeParseException e) {
+                System.out.println("Fecha no válida. Ejemplo: 2026-10-24");
+            }
+        }
+    }
+
     // Para modificar: si se deja vacío se queda la fecha actual
     public static String leerFechaOpcional(String mensaje, String actual) {
         while (true) {

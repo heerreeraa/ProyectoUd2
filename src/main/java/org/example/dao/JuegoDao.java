@@ -10,6 +10,7 @@ public interface JuegoDao {
     Juego obtener(int id) throws SQLException;
     List<Juego> listar(boolean incluirEliminados) throws SQLException;
     List<Juego> listarPorPropietaria(String dni) throws SQLException;
+    List<Juego> buscar(String nombre, String tematica, String tipo, int jugadoras, int duracionMaxima, String estado) throws SQLException;
     int modificar(Juego juego) throws SQLException;
     int cambiarEstado(int id, String estado) throws SQLException;
     int bajaLogica(int id) throws SQLException;

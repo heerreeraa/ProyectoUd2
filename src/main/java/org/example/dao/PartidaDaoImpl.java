@@ -62,6 +62,45 @@ public class PartidaDaoImpl implements PartidaDao {
         return ejecutarLista(ps);
     }
 
+    // Búsqueda por nombre del juego y por periodo; los criterios vacíos no se usan
+    @Override
+    public List<Partida> buscar(String juego, String desde, String hasta, boolean soloConPlazas) throws SQLException {
+        String query = SELECT_PARTIDA + " where p.eliminada = false";
+        ArrayList<Object> parametros = new ArrayList<>();
+        if (!juego.isEmpty()) {
+            query += " and j.nombre like ?";
+            parametros.add("%" + juego + "%");
+        }
+        if (!desde.isEmpty()) {
+            query += " and p.fecha >= ?";
+            parametros.add(desde);
+        }
+        if (!hasta.isEmpty()) {
+            query += " and p.fecha <= ?";
+            parametros.add(hasta);
+        }
+        query += " order by p.fecha, p.hora";
+
+        PreparedStatement ps = ConexionBD.getInstance().getConnection().prepareStatement(query);
+        // Se rellenan los ? en el mismo orden en que se han añadido
+        for (int i = 0; i < parametros.size(); i++) {
+            ps.setObject(i + 1, parametros.get(i));
+        }
+        List<Partida> partidas = ejecutarLista(ps);
+
+        // Las plazas libres no están en la BBDD, así que este filtro se hace en Java
+        if (!soloConPlazas) {
+            return partidas;
+        }
+        List<Partida> conPlazas = new ArrayList<>();
+        for (Partida p : partidas) {
+            if (p.getPlazasLibres() > 0) {
+                conPlazas.add(p);
+            }
+        }
+        return conPlazas;
+    }
+
     @Override
     public int modificar(Partida partida) throws SQLException {
         String query = "update partida set id_juego = ?, fecha = ?, hora = ?, jugadores_deseados = ? where id = ?";

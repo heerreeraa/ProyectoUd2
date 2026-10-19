@@ -35,6 +35,7 @@ public class MenuJuegos {
             System.out.println("7. Baja de juego");
             System.out.println("8. Reactivar juego dado de baja");
             System.out.println("9. Exportar juegos");
+            System.out.println("10. Buscar juegos");
             System.out.println("0. Volver");
             opcion = Teclado.leerEntero("Elige una opción: ");
 
@@ -67,6 +68,9 @@ public class MenuJuegos {
                     case 9:
                         MenuExportar.exportar(juegoDao.listar(false), "juegos");
                         break;
+                    case 10:
+                        buscar();
+                        break;
                     case 0:
                         break;
                     default:
@@ -88,6 +92,41 @@ public class MenuJuegos {
             System.out.println(j);
         }
         System.out.println("Total: " + juegos.size());
+    }
+
+    private static void buscar() throws SQLException {
+        System.out.println("Rellena solo los criterios que quieras usar (Enter para saltar).");
+        String nombre = Teclado.leerTextoOpcional("Nombre (o parte): ");
+        String tematica = Teclado.leerTextoOpcional("Temática (o parte): ");
+        int tipoElegido = Teclado.leerEnteroOVacio("Tipo (1 = competitivo, 2 = cooperativo): ", 1, 2);
+        int jugadoras = Teclado.leerEnteroOVacio("Número de jugadoras: ", 1, MAX_JUGADORES);
+        int duracionMaxima = Teclado.leerEnteroOVacio("Duración máxima en minutos: ", 1, MAX_DURACION);
+        int estadoElegido = Teclado.leerEnteroOVacio("Estado (1 = disponible, 2 = prestado, 3 = en reparación): ", 1, 3);
+
+        String tipo = "";
+        if (tipoElegido == 1) {
+            tipo = "COMPETITIVO";
+        } else if (tipoElegido == 2) {
+            tipo = "COOPERATIVO";
+        }
+        String estado = "";
+        if (estadoElegido == 1) {
+            estado = "DISPONIBLE";
+        } else if (estadoElegido == 2) {
+            estado = "PRESTADO";
+        } else if (estadoElegido == 3) {
+            estado = "EN_REPARACION";
+        }
+
+        List<Juego> juegos = juegoDao.buscar(nombre, tematica, tipo, jugadoras, duracionMaxima, estado);
+        if (juegos.isEmpty()) {
+            System.out.println("No hay ningún juego con esos criterios.");
+            return;
+        }
+        for (Juego j : juegos) {
+            System.out.println(j);
+        }
+        System.out.println("Encontrados: " + juegos.size());
     }
 
     private static void verJuego() throws SQLException {

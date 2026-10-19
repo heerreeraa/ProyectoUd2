@@ -9,6 +9,7 @@ public interface SociaDao {
     int insertar(Socia socia) throws SQLException;
     Socia obtener(String dni) throws SQLException;
     List<Socia> listar(boolean incluirEliminadas) throws SQLException;
+    List<Socia> buscar(String nombre, String apellidos, int edadMinima, int edadMaxima) throws SQLException;
     int modificar(Socia socia) throws SQLException;
     int bajaLogica(String dni) throws SQLException;
     int reactivar(String dni) throws SQLException;

@@ -10,6 +10,7 @@ public interface PartidaDao {
     Partida obtener(int id) throws SQLException;
     List<Partida> listar(boolean incluirEliminadas) throws SQLException;
     List<Partida> listarPorSocia(String dni) throws SQLException;
+    List<Partida> buscar(String juego, String desde, String hasta, boolean soloConPlazas) throws SQLException;
     int modificar(Partida partida) throws SQLException;
     int bajaLogica(int id) throws SQLException;
     int reactivar(int id) throws SQLException;
