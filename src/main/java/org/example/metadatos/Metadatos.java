@@ -36,10 +36,11 @@ public class Metadatos {
             resultado = metadatos.getTables(catalogo, null, "%", new String[]{"TABLE"});
             while (resultado.next()) {
                 InfoTabla tabla = new InfoTabla();
-                tabla.setEsquema(resultado.getString("TABLE_SCHEM"));
+                // En MariaDB el nombre de la BBDD viene como catálogo (TABLE_CAT) y el esquema llega vacío
+                tabla.setEsquema(resultado.getString("TABLE_CAT"));
                 tabla.setNombre(resultado.getString("TABLE_NAME"));
-                tabla.setClavePrimaria(obtenerClavePrimaria(metadatos, catalogo, tabla.getEsquema(), tabla.getNombre()));
-                tabla.setColumnas(obtenerColumnas(metadatos, catalogo, tabla.getEsquema(), tabla.getNombre()));
+                tabla.setClavePrimaria(obtenerClavePrimaria(metadatos, catalogo, null, tabla.getNombre()));
+                tabla.setColumnas(obtenerColumnas(metadatos, catalogo, null, tabla.getNombre()));
                 tablas.add(tabla);
             }
         } finally {

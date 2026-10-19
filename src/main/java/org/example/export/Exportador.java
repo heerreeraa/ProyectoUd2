@@ -2,36 +2,32 @@ package org.example.export;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonIOException;
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.XStreamException;
+import org.example.metadatos.InfoBBDD;
+import org.example.metadatos.InfoColumna;
+import org.example.metadatos.InfoTabla;
+import org.example.metadatos.MetadatosCompletos;
 import org.example.models.Inscripcion;
 import org.example.models.Juego;
 import org.example.models.Partida;
 import org.example.models.Socia;
-import org.example.metadatos.InfoBBDD;
-import org.example.metadatos.InfoColumna;
-import org.example.metadatos.InfoTabla;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
+// Exporta cualquier lista u objeto a exportaciones/<nombre>.xml o .json
 public class Exportador {
 
+    private static final String CARPETA = "exportaciones";
+
     public static boolean exportarXML(Object datos, String nombre) {
-        if (datos == null) {
-            System.out.println("No se pueden exportar datos vacíos a XML.");
-            return false;
-        }
-
-        BufferedWriter escritor = null;
         try {
-            File archivo = crearArchivo(nombre, "xml");
-
             XStream xstream = new XStream();
+            // Los alias cambian el nombre completo de la clase (org.example.models.Juego) por uno corto (<juego>)
             xstream.alias("socia", Socia.class);
             xstream.alias("juego", Juego.class);
             xstream.alias("partida", Partida.class);
@@ -39,79 +35,51 @@ public class Exportador {
             xstream.alias("bbdd", InfoBBDD.class);
             xstream.alias("tabla", InfoTabla.class);
             xstream.alias("columna", InfoColumna.class);
-            xstream.alias(nombre, datos.getClass());
+            xstream.alias("metadatos", MetadatosCompletos.class);
+            // XStream trata cualquier ArrayList como List, así que el alias de la raíz va sobre List
+            if (datos instanceof List) {
+                xstream.alias(nombre, List.class);
+            } else {
+                xstream.alias(nombre, datos.getClass());
+            }
 
-            escritor = new BufferedWriter(new FileWriter(archivo, StandardCharsets.UTF_8));
-            escritor.write(xstream.toXML(datos));
-            escritor.close();
-            escritor = null;
-
-            System.out.println("Datos exportados a exportaciones/" + nombre + ".xml");
+            escribirFichero(xstream.toXML(datos), nombre + ".xml");
+            System.out.println("Datos exportados a " + CARPETA + "/" + nombre + ".xml");
             return true;
         } catch (IOException e) {
-            System.out.println("No se pudo escribir el fichero XML: " + e.getMessage());
+            System.out.println("No se ha podido escribir el fichero XML: " + e.getMessage());
             return false;
-        } catch (XStreamException e) {
-            System.out.println("No se pudieron convertir los datos a XML: " + e.getMessage());
+        } catch (RuntimeException e) {
+            // XStream lanza excepciones propias si no puede convertir los datos
+            System.out.println("No se han podido convertir los datos a XML: " + e.getMessage());
             return false;
-        } catch (IllegalArgumentException e) {
-            System.out.println("No se pudo crear el fichero XML: " + e.getMessage());
-            return false;
-        } finally {
-            if (escritor != null) {
-                try {
-                    escritor.close();
-                } catch (IOException e) {
-                    System.out.println("No se pudo cerrar el fichero XML: " + e.getMessage());
-                }
-            }
         }
     }
 
     public static boolean exportarJSON(Object datos, String nombre) {
-        BufferedWriter escritor = null;
         try {
-            File archivo = crearArchivo(nombre, "json");
+            // setPrettyPrinting pone saltos de línea y sangría para que el JSON se pueda leer
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-            escritor = new BufferedWriter(new FileWriter(archivo, StandardCharsets.UTF_8));
-            gson.toJson(datos, escritor);
-            escritor.close();
-            escritor = null;
-
-            System.out.println("Datos exportados a exportaciones/" + nombre + ".json");
+            escribirFichero(gson.toJson(datos), nombre + ".json");
+            System.out.println("Datos exportados a " + CARPETA + "/" + nombre + ".json");
             return true;
         } catch (IOException e) {
-            System.out.println("No se pudo escribir el fichero JSON: " + e.getMessage());
+            System.out.println("No se ha podido escribir el fichero JSON: " + e.getMessage());
             return false;
-        } catch (JsonIOException | IllegalArgumentException e) {
-            System.out.println("No se pudieron convertir los datos a JSON: " + e.getMessage());
+        } catch (RuntimeException e) {
+            System.out.println("No se han podido convertir los datos a JSON: " + e.getMessage());
             return false;
-        } finally {
-            if (escritor != null) {
-                try {
-                    escritor.close();
-                } catch (IOException e) {
-                    System.out.println("No se pudo cerrar el fichero JSON: " + e.getMessage());
-                }
-            }
         }
     }
 
-    private static File crearArchivo(String nombre, String extension) throws IOException {
-        if (nombre == null || nombre.trim().isEmpty()
-                || nombre.contains("/") || nombre.contains("\\")
-                || nombre.equals(".") || nombre.equals("..")) {
-            throw new IllegalArgumentException("El nombre del fichero no es válido.");
+    // Crea la carpeta si no existe y escribe el texto en el fichero
+    private static void escribirFichero(String texto, String nombreFichero) throws IOException {
+        File carpeta = new File(CARPETA);
+        if (!carpeta.exists()) {
+            carpeta.mkdir();
         }
-
-        File carpeta = new File("exportaciones");
-        if (!carpeta.exists() && !carpeta.mkdirs()) {
-            throw new IOException("No se pudo crear la carpeta exportaciones.");
-        }
-        if (!carpeta.isDirectory()) {
-            throw new IOException("La ruta exportaciones no es una carpeta.");
-        }
-        return new File(carpeta, nombre + "." + extension);
+        BufferedWriter escritor = new BufferedWriter(new FileWriter(new File(carpeta, nombreFichero), StandardCharsets.UTF_8));
+        escritor.write(texto);
+        escritor.close();
     }
 }
