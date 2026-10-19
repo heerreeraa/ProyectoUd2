@@ -9,6 +9,9 @@ import org.example.models.Inscripcion;
 import org.example.models.Juego;
 import org.example.models.Partida;
 import org.example.models.Socia;
+import org.example.metadatos.InfoBBDD;
+import org.example.metadatos.InfoColumna;
+import org.example.metadatos.InfoTabla;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -33,6 +36,9 @@ public class Exportador {
             xstream.alias("juego", Juego.class);
             xstream.alias("partida", Partida.class);
             xstream.alias("inscripcion", Inscripcion.class);
+            xstream.alias("bbdd", InfoBBDD.class);
+            xstream.alias("tabla", InfoTabla.class);
+            xstream.alias("columna", InfoColumna.class);
             xstream.alias(nombre, datos.getClass());
 
             escritor = new BufferedWriter(new FileWriter(archivo, StandardCharsets.UTF_8));
