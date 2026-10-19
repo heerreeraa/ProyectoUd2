@@ -3,6 +3,7 @@ package org.example.menu;
 import org.example.dao.AsociacionDao;
 import org.example.dao.AsociacionDaoImpl;
 import org.example.models.Asociacion;
+import org.example.seguridad.GestorUsuarios;
 import org.example.utils.MensajesError;
 import org.example.utils.Teclado;
 
@@ -21,6 +22,7 @@ public class MenuPrincipal {
             System.out.println("3. Gestión de partidas");
             System.out.println("4. Datos de la asociación");
             System.out.println("5. Metadatos de la base de datos");
+            System.out.println("6. Usuarios y registro de sesiones");
             System.out.println("0. Salir");
             opcion = Teclado.leerEntero("Elige una opción: ");
 
@@ -39,6 +41,9 @@ public class MenuPrincipal {
                     break;
                 case 5:
                     MenuMetadatos.mostrar();
+                    break;
+                case 6:
+                    MenuUsuarios.mostrar();
                     break;
                 case 0:
                     System.out.println("¡Hasta pronto!");
@@ -62,6 +67,7 @@ public class MenuPrincipal {
         } catch (SQLException e) {
             System.out.println(MensajesError.traducir(e));
         }
+        System.out.println("Sesión iniciada como: " + GestorUsuarios.getUsuarioActual());
         System.out.println("==========================================");
     }
 }
