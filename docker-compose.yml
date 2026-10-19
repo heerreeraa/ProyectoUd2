@@ -1,0 +1,15 @@
+# Levanta el servidor MariaDB y carga sql/bbdd.sql la primera vez que se crea
+services:
+  bbdd:
+    image: mariadb:11.4
+    container_name: mariadb-asociacion
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d
+      - datos-mariadb:/var/lib/mysql
+
+volumes:
+  datos-mariadb:
