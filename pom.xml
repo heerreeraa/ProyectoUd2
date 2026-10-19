@@ -58,6 +58,15 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.2.5</version>
       </plugin>
+      <!-- Permite ejecutar la aplicación desde terminal con: ./mvnw compile exec:java -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.5.0</version>
+        <configuration>
+          <mainClass>org.example.App</mainClass>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 </project>
