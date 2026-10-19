@@ -9,3 +9,6 @@ out/
 # Ficheros que genera la aplicación al ejecutarse
 exportaciones/
 datos/
+
+# Clases de prueba temporales (PruebaExportador, PruebaMetadatos, PruebaLogin...)
+src/main/java/org/example/**/Prueba*.java

@@ -34,6 +34,7 @@ public class MenuJuegos {
             System.out.println("6. Cambiar estado (disponible, prestado, en reparación)");
             System.out.println("7. Baja de juego");
             System.out.println("8. Reactivar juego dado de baja");
+            System.out.println("9. Exportar juegos");
             System.out.println("0. Volver");
             opcion = Teclado.leerEntero("Elige una opción: ");
 
@@ -62,6 +63,9 @@ public class MenuJuegos {
                         break;
                     case 8:
                         reactivar();
+                        break;
+                    case 9:
+                        MenuExportar.exportar(juegoDao.listar(false), "juegos");
                         break;
                     case 0:
                         break;

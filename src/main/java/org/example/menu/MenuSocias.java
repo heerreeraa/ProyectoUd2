@@ -2,9 +2,12 @@ package org.example.menu;
 
 import org.example.dao.JuegoDao;
 import org.example.dao.JuegoDaoImpl;
+import org.example.dao.PartidaDao;
+import org.example.dao.PartidaDaoImpl;
 import org.example.dao.SociaDao;
 import org.example.dao.SociaDaoImpl;
 import org.example.models.Juego;
+import org.example.models.Partida;
 import org.example.models.Socia;
 import org.example.utils.MensajesError;
 import org.example.utils.Teclado;
@@ -17,6 +20,7 @@ public class MenuSocias {
 
     private static SociaDao sociaDao = new SociaDaoImpl();
     private static JuegoDao juegoDao = new JuegoDaoImpl();
+    private static PartidaDao partidaDao = new PartidaDaoImpl();
 
     public static void mostrar() {
         int opcion;
@@ -29,6 +33,7 @@ public class MenuSocias {
             System.out.println("5. Modificar socia");
             System.out.println("6. Baja de socia");
             System.out.println("7. Reactivar socia dada de baja");
+            System.out.println("8. Exportar socias");
             System.out.println("0. Volver");
             opcion = Teclado.leerEntero("Elige una opción: ");
 
@@ -55,6 +60,9 @@ public class MenuSocias {
                         break;
                     case 7:
                         reactivar();
+                        break;
+                    case 8:
+                        MenuExportar.exportar(sociaDao.listar(false), "socias");
                         break;
                     case 0:
                         break;
@@ -89,6 +97,11 @@ public class MenuSocias {
         System.out.println("Juegos que ha traído a la asociación: " + juegos.size());
         for (Juego j : juegos) {
             System.out.println("  - [" + j.getId() + "] " + j.getNombre() + " (" + j.getEstado() + ")");
+        }
+        List<Partida> partidas = partidaDao.listarPorSocia(socia.getDni());
+        System.out.println("Partidas en las que está inscrita: " + partidas.size());
+        for (Partida p : partidas) {
+            System.out.println("  - [" + p.getId() + "] " + p.getFecha() + " a las " + p.getHora() + " | " + p.getNombreJuego());
         }
     }
 

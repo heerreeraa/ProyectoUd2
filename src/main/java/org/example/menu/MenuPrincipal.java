@@ -18,6 +18,9 @@ public class MenuPrincipal {
             mostrarCabecera();
             System.out.println("1. Gestión de socias");
             System.out.println("2. Gestión de juegos");
+            System.out.println("3. Gestión de partidas");
+            System.out.println("4. Datos de la asociación");
+            System.out.println("5. Metadatos de la base de datos");
             System.out.println("0. Salir");
             opcion = Teclado.leerEntero("Elige una opción: ");
 
@@ -27,6 +30,15 @@ public class MenuPrincipal {
                     break;
                 case 2:
                     MenuJuegos.mostrar();
+                    break;
+                case 3:
+                    MenuPartidas.mostrar();
+                    break;
+                case 4:
+                    MenuAsociacion.mostrar();
+                    break;
+                case 5:
+                    MenuMetadatos.mostrar();
                     break;
                 case 0:
                     System.out.println("¡Hasta pronto!");
