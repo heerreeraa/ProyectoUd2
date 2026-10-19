@@ -83,6 +83,50 @@ public class Teclado {
         }
     }
 
+    // Para modificar: si se deja vacío se queda el valor actual
+    public static int leerEnteroOpcional(String mensaje, int actual, int min, int max) {
+        while (true) {
+            String texto = leerLinea(mensaje + " [" + actual + "]: ");
+            if (texto.isEmpty()) {
+                return actual;
+            }
+            try {
+                int numero = Integer.parseInt(texto);
+                if (numero >= min && numero <= max) {
+                    return numero;
+                }
+                System.out.println("El número tiene que estar entre " + min + " y " + max + ".");
+            } catch (NumberFormatException e) {
+                System.out.println("Tienes que escribir un número entero.");
+            }
+        }
+    }
+
+    // Para modificar: si se deja vacío se queda la fecha actual
+    public static String leerFechaOpcional(String mensaje, String actual) {
+        while (true) {
+            String texto = leerLinea(mensaje + " [" + actual + "]: ");
+            if (texto.isEmpty()) {
+                return actual;
+            }
+            try {
+                LocalDate.parse(texto);
+                return texto;
+            } catch (DateTimeParseException e) {
+                System.out.println("Fecha no válida. Ejemplo: 2026-10-24");
+            }
+        }
+    }
+
+    // Para modificar textos: si se deja vacío se queda el valor actual
+    public static String leerTextoOpcional(String mensaje, String actual) {
+        String texto = leerLinea(mensaje + " [" + actual + "]: ");
+        if (texto.isEmpty()) {
+            return actual;
+        }
+        return texto;
+    }
+
     public static boolean leerSiNo(String mensaje) {
         while (true) {
             String texto = leerLinea(mensaje + " (s/n): ").toLowerCase();
