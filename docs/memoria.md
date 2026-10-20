@@ -210,63 +210,7 @@ El código está organizado en tres capas, parecido a un MVC sencillo:
 
 # 7. Modelo entidad-relación
 
-```mermaid
-erDiagram
-    SOCIA ||--o{ JUEGO : "es propietaria de"
-    JUEGO ||--o{ PARTIDA : "se juega en"
-    PARTIDA ||--o{ PARTIDA_JUGADORA : "tiene inscritas"
-    SOCIA |o--o{ PARTIDA_JUGADORA : "se inscribe en"
-
-    ASOCIACION {
-        int id PK
-        varchar razon_social
-        varchar cif
-        varchar direccion
-        varchar telefono
-        varchar email
-        date fecha_apertura
-    }
-    SOCIA {
-        varchar dni PK
-        varchar nombre
-        varchar apellidos
-        varchar telefono
-        int edad
-        varchar email
-        boolean eliminada
-    }
-    JUEGO {
-        int id PK
-        varchar nombre
-        varchar autores
-        text descripcion
-        int min_jugadores
-        int max_jugadores
-        int duracion
-        varchar tematica
-        enum tipo
-        varchar ubicacion
-        enum estado
-        varchar dni_propietaria FK
-        date fecha_alta
-        boolean eliminado
-    }
-    PARTIDA {
-        int id PK
-        int id_juego FK
-        date fecha
-        time hora
-        int jugadores_deseados
-        boolean eliminada
-    }
-    PARTIDA_JUGADORA {
-        int id PK
-        int id_partida FK
-        varchar dni_socia FK
-        varchar nombre_invitada
-        boolean ganadora
-    }
-```
+El diagrama completo, con todas las columnas de cada tabla, está en el archivo [`docs/modelo_er.md`](https://github.com/heerreeraa/ProyectoUd2/blob/main/docs/modelo_er.md) del repositorio, y el script de creación en `sql/bbdd.sql`. Las tablas son `asociacion`, `socia`, `juego`, `partida` y `partida_jugadora`.
 
 | Relación | Cardinalidad | Implementación |
 |---|---|---|
