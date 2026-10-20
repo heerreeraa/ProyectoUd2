@@ -24,9 +24,42 @@ Tecnologías utilizadas:
 | JUnit 5 | Tests |
 | Git y GitHub | Control de versiones y trabajo en pareja |
 
-# 2. Puesta en marcha y requisitos
+# 2. Reparto de tareas
 
-## 2.1. Requisitos
+Nos repartimos el trabajo por paquetes del proyecto, para poder trabajar a la vez sin tocar los mismos ficheros, y por áreas de responsabilidad: **Jon** se encargó del desarrollo de la base y de la gestión de la asociación, y **Joseba** del **QA (control de calidad)** y de las funcionalidades de exportación, metadatos, seguridad y estadísticas.
+
+| Tarea | Responsable |
+|---|---|
+| Base del proyecto: Maven, Docker, script SQL con datos de prueba, conexión Singleton y modelos | Jon |
+| Gestión de socias, juegos, partidas y asociación (DAOs y menús) | Jon |
+| Validaciones y control de errores (`Teclado`, `Validador`, `MensajesError`) | Jon |
+| Exportación a XML y JSON (`Exportador`) | Joseba |
+| Lectura de los metadatos de la base de datos (`Metadatos`) | Joseba |
+| Login con usuarios en fichero binario y registro de sesiones (bloque 5) | Joseba |
+| Histórico de socia y estadísticas (bloque 4) | Joseba (datos del histórico) y Jon (consultas y menú) |
+| Búsquedas avanzadas (bloque 3) | Jon |
+| Tests JUnit (bloque 2) | Jon |
+| Scripts de arranque y Maven Wrapper (bloque 1) | Jon |
+| **QA: plan de pruebas, pruebas de toda la aplicación y verificación de las correcciones** | **Joseba** |
+| Integración de las dos partes y revisión del código | Los dos |
+| Modelo E/R, manual y memoria | Jon (redacción) y Joseba (revisión y resultados de las pruebas) |
+| Actas de seguimiento y preparación de la defensa | Los dos |
+
+## 2.1. QA (control de calidad)
+
+Joseba se encargó de comprobar que la aplicación funciona y de que no quede ninguna excepción sin controlar, ya que cada una resta un punto:
+
+- **Instalación en un segundo equipo:** clonó el repositorio en su ordenador y siguió los pasos de puesta en marcha (Docker, IntelliJ, JDK 17) para comprobar que el proyecto arranca fuera del equipo donde se creó.
+- **Plan de pruebas:** una lista de casos por cada menú, pensada para romper la aplicación: datos con formato incorrecto, valores fuera de rango, identificadores que no existen, borrados que rompen la integridad referencial, partidas llenas o ya jugadas, ficheros dañados y el servidor apagado.
+- **Ejecución y registro:** pasó todas las pruebas y comunicó los resultados, incluyendo los casos que funcionaban pero se veían mal (por ejemplo, las estadísticas de un periodo sin partidas).
+- **Verificación:** volvió a probar después de cada corrección.
+- **Exportaciones:** abrió los XML y JSON generados para comprobar que eran correctos.
+
+El resultado de las pruebas está en el apartado 9.
+
+# 3. Puesta en marcha y requisitos
+
+## 3.1. Requisitos
 
 - **Git**, para descargar el proyecto.
 - **Docker Desktop**, donde se ejecuta el servidor MariaDB.
@@ -35,7 +68,7 @@ Tecnologías utilizadas:
 
 Maven no hace falta instalarlo: viene incluido en IntelliJ y el proyecto trae el *Maven Wrapper* (`mvnw` y `mvnw.cmd`), que lo descarga solo.
 
-## 2.2. Descargar el proyecto
+## 3.2. Descargar el proyecto
 
 ```bash
 git clone https://github.com/heerreeraa/ProyectoUd2.git
@@ -43,7 +76,7 @@ git clone https://github.com/heerreeraa/ProyectoUd2.git
 
 O desde IntelliJ: *File → New → Project from Version Control* y pegar la misma URL.
 
-## 2.3. Arrancar la base de datos
+## 3.3. Arrancar la base de datos
 
 Con Docker Desktop abierto, en la carpeta del proyecto:
 
@@ -55,25 +88,25 @@ La primera vez se crea el contenedor `mariadb-asociacion` (puerto **3306**, usua
 
 Si aparece el error *"port is already allocated"*, hay otro MySQL o MariaDB en el puerto 3306: hay que pararlo (`docker stop <nombre>`) y repetir el comando.
 
-## 2.4. Abrir y ejecutar en IntelliJ
+## 3.4. Abrir y ejecutar en IntelliJ
 
 1. *File → Open* y elegir la carpeta del proyecto. Si aparece *Load Maven project*, pulsar **Load**.
 2. En *File → Project Structure → Project → SDK* elegir un **JDK 17**.
 3. Abrir `src/main/java/org/example/App.java` y pulsar el botón verde ▶.
 
-## 2.5. Arranque automático
+## 3.5. Arranque automático
 
 Los scripts `arrancar.sh` (macOS/Linux) y `arrancar.bat` (Windows) hacen todo lo anterior de una vez: comprueban que Docker está abierto, levantan la base de datos, esperan a que esté lista y arrancan la aplicación con `mvnw`.
 
-## 2.6. Primer inicio de sesión
+## 3.6. Primer inicio de sesión
 
 La primera vez, la aplicación pide crear el **usuario administrador**. Los usuarios se guardan en `datos/usuarios.dat` y las sesiones en `datos/sesiones.log`. Si se olvida la contraseña, basta con borrar `datos/usuarios.dat` y crear de nuevo el administrador.
 
-## 2.7. Servidor en otro equipo
+## 3.7. Servidor en otro equipo
 
 Los datos de conexión están en `config.properties` (`host`, `puerto`, `bbdd`, `usuario`, `password`). Para conectarse a un servidor de otro equipo de la red solo hay que cambiar `host` por su IP, sin recompilar.
 
-## 2.8. Otros comandos útiles
+## 3.8. Otros comandos útiles
 
 | Para… | Comando |
 |---|---|
@@ -82,7 +115,7 @@ Los datos de conexión están en `config.properties` (`host`, `puerto`, `bbdd`, 
 
 Los ficheros exportados se guardan en la carpeta `exportaciones/`.
 
-# 3. Principales características
+# 4. Principales características
 
 Al arrancar, la aplicación comprueba la conexión con la base de datos y pide iniciar sesión. Después muestra el menú principal con los datos de la asociación (razón social, CIF, dirección, contacto y fecha de apertura) y el usuario conectado.
 
@@ -112,7 +145,7 @@ Al arrancar, la aplicación comprueba la conexión con la base de datos y pide i
 - Si el servidor no está arrancado, la aplicación lo dice y termina.
 - `App` tiene un `try/catch` general como red de seguridad.
 
-## 3.1. Estructura del proyecto
+## 4.1. Estructura del proyecto
 
 | Paquete | Contenido |
 |---|---|
@@ -127,21 +160,21 @@ Al arrancar, la aplicación comprueba la conexión con la base de datos y pide i
 
 Además: `sql/bbdd.sql` (creación de la base de datos y datos de prueba), `docker-compose.yml`, `config.properties`, los scripts de arranque y los tests en `src/test/java`.
 
-# 4. Patrones de diseño
+# 5. Patrones de diseño
 
-## 4.1. Singleton: `ConexionBD`
+## 5.1. Singleton: `ConexionBD`
 
 Toda la aplicación comparte **una única conexión** con la base de datos. El constructor de `ConexionBD` es privado, así que nadie puede crear otra instancia con `new`; la única forma de obtenerla es `ConexionBD.getInstance()`, que la crea la primera vez y después devuelve siempre la misma. Si la conexión se ha cerrado, crea una nueva.
 
 Lo hemos elegido porque abrir una conexión es costoso y no tiene sentido abrir una por cada consulta en una aplicación de un solo usuario. La conexión se cierra una sola vez, al salir de la aplicación (`ConexionBD.cerrar()`).
 
-## 4.2. DAO (*Data Access Object*)
+## 5.2. DAO (*Data Access Object*)
 
 Cada tabla tiene una **interfaz** (`SociaDao`, `JuegoDao`, `PartidaDao`, `AsociacionDao`) con las operaciones disponibles y una **implementación** (`SociaDaoImpl`…) con el SQL. Los DAO son las únicas clases que hablan con la base de datos: los menús no tienen ni una línea de SQL.
 
 Así está separado el **qué** (la interfaz) del **cómo** (la implementación con JDBC). Si cambiáramos de SGBD o de forma de acceder a los datos, solo habría que cambiar la implementación. Los menús guardan el DAO en una variable del tipo de la interfaz (`SociaDao sociaDao = new SociaDaoImpl()`).
 
-## 4.3. Separación en capas
+## 5.3. Separación en capas
 
 El código está organizado en tres capas, parecido a un MVC sencillo:
 
@@ -149,11 +182,11 @@ El código está organizado en tres capas, parecido a un MVC sencillo:
 - **Acceso a datos** (`dao`): el SQL.
 - **Presentación** (`menu`): lo que ve y teclea el usuario.
 
-## 4.4. Clases de utilidad
+## 5.4. Clases de utilidad
 
 `Teclado`, `Validador`, `MensajesError` y `Exportador` solo tienen métodos `static`: no guardan estado y se usan desde cualquier sitio sin crear objetos. Así la lectura de teclado, las validaciones, los mensajes de error y la exportación se escriben una sola vez.
 
-# 5. Decisiones tomadas durante el desarrollo
+# 6. Decisiones tomadas durante el desarrollo
 
 **Los DAO lanzan `SQLException` y los menús la capturan.** Así cada menú puede mostrar el mensaje adecuado según lo que estaba haciendo. Por ejemplo, al borrar una socia, el error 1451 (tiene datos relacionados) no se muestra como un error: se ofrece hacer la baja lógica.
 
@@ -175,7 +208,7 @@ El código está organizado en tres capas, parecido a un MVC sencillo:
 
 **Trabajo en pareja con Git.** Nos repartimos el trabajo por paquetes para no tocar los mismos ficheros a la vez y evitar conflictos, y acordamos el mismo estilo de código (el visto en clase: `close()` a mano, comentarios en español, sin streams ni lambdas). Las decisiones sobre el modelo de datos se explican en el apartado siguiente.
 
-# 6. Modelo entidad-relación
+# 7. Modelo entidad-relación
 
 ```mermaid
 erDiagram
@@ -260,7 +293,7 @@ erDiagram
 
 **Sin `ON UPDATE CASCADE` en las claves de socia.** MariaDB no permite usar en un `CHECK` una columna con una clave foránea `ON UPDATE CASCADE` (es el caso de `dni_socia`), y como el DNI no se modifica no hace falta.
 
-# 7. Mejoras implementadas
+# 8. Mejoras implementadas
 
 | Bloque | Mejora | Cómo probarla |
 |---|---|---|
@@ -270,7 +303,7 @@ erDiagram
 | 4 · Estadísticas | Histórico de una socia en un periodo (partidas, victorias, % de victorias, juego más jugado) y estadísticas de la asociación (partidas, media de jugadoras, ocupación, invitadas, juegos más jugados, socias con más partidas y victorias, juegos por estado, tipo y propietaria). Exportables a XML y JSON | Menú *7. Estadísticas* |
 | 5 · Seguridad | Login con usuarios en fichero binario (contraseñas con SHA-256 y sal, 3 intentos) y registro de entradas, salidas y fallos en un fichero de texto | Al arrancar y menú *6. Usuarios* |
 
-# 8. Pruebas realizadas
+# 9. Pruebas realizadas
 
 Además de los tests automáticos, hemos probado a mano a romper la aplicación siguiendo una lista de pruebas por cada menú (opciones, socias, juegos, partidas, búsquedas, estadísticas, metadatos, login, servidor caído y exportaciones). En todos los casos la aplicación muestra un mensaje y sigue funcionando:
 
@@ -294,7 +327,7 @@ Las pruebas nos sirvieron para mejorar dos cosas:
 - **Reconexión.** Al principio, si el servidor se caía y volvía, la aplicación seguía sin conexión: `ConexionBD` solo comprobaba si la conexión estaba cerrada, y una conexión cortada por el servidor no aparece como cerrada. Ahora comprueba `isValid(2)`, que pregunta al servidor.
 - **Presentación de las estadísticas.** Separamos los datos del periodo de los datos actuales (socias activas y juegos), cambiamos `[]` por "Ninguno" cuando no hay datos y corregimos el singular y plural ("1 partida").
 
-# 9. Actas de seguimiento
+# 10. Actas de seguimiento
 
 ## Acta 1 · 19/10/2026 · Inicio y reparto
 
@@ -306,7 +339,7 @@ Las pruebas nos sirvieron para mejorar dos cosas:
 - Diseño del modelo E/R (tablas, relaciones, bajas lógicas, invitadas en la tabla intermedia).
 - Reparto por paquetes para no pisarnos en Git:
   - **Jon:** base del proyecto (Maven, Docker, SQL, conexión, modelos), DAOs y menús de socias, juegos, partidas y asociación, búsquedas, tests y scripts de arranque.
-  - **Joseba:** exportación a XML/JSON, metadatos, login y sesiones, y estadísticas.
+  - **Joseba:** exportación a XML/JSON, metadatos, login y sesiones, estadísticas y el QA de toda la aplicación.
 - Acordamos el estilo de código común.
 
 **Avances:** proyecto Maven, `docker-compose.yml`, script SQL con datos de prueba, conexión Singleton, clase `Teclado` y modelos subidos al repositorio.
@@ -344,7 +377,7 @@ Las pruebas nos sirvieron para mejorar dos cosas:
 - Búsquedas avanzadas, 27 tests JUnit y scripts de arranque terminados.
 - Modelo E/R documentado.
 - Manual de puesta en marcha y memoria.
-- **Pruebas para romper la aplicación (Joseba):** todas las de la lista funcionaron bien, sin ninguna excepción sin controlar. Solo hubo que mejorar la presentación de las estadísticas cuando no hay partidas en el periodo.
-- **Mejora encontrada al probar con el servidor apagado (Jon):** la aplicación ahora se reconecta sola cuando el servidor vuelve a arrancar.
+- **QA (Joseba):** pasó el plan de pruebas completo; todas las de la lista funcionaron bien, sin ninguna excepción sin controlar. Solo hubo que mejorar la presentación de las estadísticas cuando no hay partidas en el periodo.
+- **Correcciones tras el QA (Jon):** mejor presentación de las estadísticas y reconexión automática cuando el servidor vuelve a arrancar.
 
 **Objetivos:** entregar el proyecto y preparar la defensa explicando cada uno el código del otro.
