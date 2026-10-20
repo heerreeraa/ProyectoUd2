@@ -44,11 +44,13 @@ public class ConexionBD {
         return connection;
     }
 
-    // Devuelve siempre la misma instancia; si la conexión se ha cerrado, crea otra
+    // Devuelve siempre la misma instancia; si la conexión ya no funciona, crea otra.
+    // isValid(2) pregunta al servidor (máximo 2 segundos): así, si el servidor se ha caído
+    // y vuelve a arrancar, la aplicación se reconecta sola
     public static ConexionBD getInstance() throws SQLException {
         if (instance == null) {
             instance = new ConexionBD();
-        } else if (instance.getConnection().isClosed()) {
+        } else if (!instance.getConnection().isValid(2)) {
             instance = new ConexionBD();
         }
         return instance;

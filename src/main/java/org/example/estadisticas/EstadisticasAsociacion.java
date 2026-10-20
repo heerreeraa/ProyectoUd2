@@ -162,13 +162,20 @@ public class EstadisticasAsociacion {
 
     @Override
     public String toString() {
+        // La lista de juegos se pone separada por comas, o "Ninguno" si no hay partidas
+        String juegos = "Ninguno";
+        if (!juegosMasJugados.isEmpty()) {
+            juegos = String.join(", ", juegosMasJugados);
+        }
         return "Estadísticas del " + desde + " al " + hasta + "\n"
-                + "Socias activas: " + sociasActivas + "\n"
+                + "--- Partidas del periodo ---\n"
                 + "Partidas: " + partidasJugadas + " | Media de jugadoras por partida: " + Math.round(mediaJugadorasPorPartida * 10) / 10.0
                 + " | Ocupación media: " + Math.round(ocupacionMedia) + "% | Invitadas: " + invitadas + "\n"
-                + "Juegos más jugados: " + juegosMasJugados + "\n"
+                + "Juegos más jugados: " + juegos + "\n"
                 + "Socia con más partidas: " + sociaConMasPartidas + "\n"
                 + "Socia con más victorias: " + sociaConMasVictorias + "\n"
+                + "--- Situación actual ---\n"
+                + "Socias activas: " + sociasActivas + "\n"
                 + "Juegos por estado: " + juegosPorEstado + "\n"
                 + "Competitivos: " + competitivos + " | Cooperativos: " + cooperativos + "\n"
                 + "De la asociación: " + juegosAsociacion + " | De socias: " + juegosDeSocias;

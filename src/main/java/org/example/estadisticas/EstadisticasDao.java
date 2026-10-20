@@ -77,7 +77,7 @@ public class EstadisticasDao {
         // El juego con más partidas: se agrupa por juego y se coge el primero
         query = "select j.nombre, count(*) as total" + INSCRIPCIONES_CON_JUEGO
                 + " and pj.dni_socia = ? group by j.id, j.nombre order by total desc limit 1";
-        historico.setJuegoMasJugado(primerResultado(query, desde, hasta, dni, "partidas"));
+        historico.setJuegoMasJugado(primerResultado(query, desde, hasta, dni, "partida"));
         return historico;
     }
 
@@ -117,7 +117,7 @@ public class EstadisticasDao {
         ResultSet rs = ps.executeQuery();
         ArrayList<String> juegos = new ArrayList<>();
         while (rs.next()) {
-            juegos.add(rs.getString("nombre") + " (" + rs.getInt("total") + " partidas)");
+            juegos.add(rs.getString("nombre") + " (" + cantidad(rs.getInt("total"), "partida") + ")");
         }
         rs.close();
         ps.close();
@@ -126,9 +126,9 @@ public class EstadisticasDao {
         // La socia con más partidas y la socia con más victorias
         String consultaSocia = "select concat(s.nombre, ' ', s.apellidos) as nombre, count(*) as total" + INSCRIPCIONES_CON_SOCIA;
         e.setSociaConMasPartidas(primerResultado(consultaSocia + " group by s.dni order by total desc limit 1",
-                desde, hasta, null, "partidas"));
+                desde, hasta, null, "partida"));
         e.setSociaConMasVictorias(primerResultado(consultaSocia + " and pj.ganadora = true group by s.dni order by total desc limit 1",
-                desde, hasta, null, "victorias"));
+                desde, hasta, null, "victoria"));
         return e;
     }
 
@@ -173,6 +173,14 @@ public class EstadisticasDao {
         return total;
     }
 
+    // "1 partida", "3 partidas"
+    private String cantidad(int numero, String palabra) {
+        if (numero == 1) {
+            return numero + " " + palabra;
+        }
+        return numero + " " + palabra + "s";
+    }
+
     // Devuelve la primera fila como "Nombre (3 partidas)", o "Ninguna" si no hay datos.
     // Si dni no es null se usa como tercer parámetro
     private String primerResultado(String query, String desde, String hasta, String dni, String unidad) throws SQLException {
@@ -185,7 +193,7 @@ public class EstadisticasDao {
         ResultSet rs = ps.executeQuery();
         String resultado = "Ninguna";
         if (rs.next()) {
-            resultado = rs.getString("nombre") + " (" + rs.getInt("total") + " " + unidad + ")";
+            resultado = rs.getString("nombre") + " (" + cantidad(rs.getInt("total"), unidad) + ")";
         }
         rs.close();
         ps.close();
