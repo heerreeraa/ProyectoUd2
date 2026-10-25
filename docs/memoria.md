@@ -41,6 +41,7 @@ Nos repartimos el trabajo por paquetes del proyecto, para poder trabajar a la ve
 | Tests JUnit (bloque 2) | Jon |
 | Scripts de arranque y Maven Wrapper (bloque 1) | Jon |
 | QA: plan de pruebas, pruebas de toda la aplicación y verificación de las correcciones | Joseba |
+| Revisión y limpieza final del código y la documentación para la entrega | Joseba |
 | Integración de las dos partes y revisión del código | Los dos |
 | Modelo E/R, manual y memoria | Jon (redacción) y Joseba (revisión y resultados de las pruebas) |
 | Actas de seguimiento y preparación de la defensa | Los dos |
@@ -359,5 +360,6 @@ Avances:
 - Manual de puesta en marcha y memoria.
 - QA (Joseba): pasó el plan de pruebas completo; todas las de la lista funcionaron bien, sin ninguna excepción sin controlar. Solo hubo que mejorar la presentación de las estadísticas cuando no hay partidas en el periodo.
 - Correcciones tras el QA (Jon): mejor presentación de las estadísticas y reconexión automática cuando el servidor vuelve a arrancar.
+- Limpieza final (Joseba): repaso de todo el código y la documentación antes de la entrega para dejar el mismo estilo en todas las clases, quitar comentarios y restos de pruebas, y comprobar que todo compila y los tests pasan.
 
 Objetivos: entregar el proyecto y preparar la defensa explicando cada uno el código del otro.
