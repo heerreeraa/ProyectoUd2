@@ -17,8 +17,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-// Pruebas del DAO de socias contra la BBDD (tiene que estar arrancado Docker).
-// Se usa una socia de prueba que se crea antes de cada test y se borra después
 public class SociaDaoTest {
 
     private static final String DNI_PRUEBA = "00000000T";
@@ -70,26 +68,22 @@ public class SociaDaoTest {
         assertFalse(sociaDao.obtener(DNI_PRUEBA).isEliminada());
     }
 
-    // Si el insert no lanza la excepción, fail() hace que el test falle
     @Test
     public void noSePuedeInsertarDosVeces() {
         try {
             sociaDao.insertar(new Socia(DNI_PRUEBA, "Otra", "Igual", "600000001", 20, "otra@mail.com", false));
             fail("Se ha podido insertar dos veces el mismo DNI");
         } catch (SQLException e) {
-            // 1062 = clave duplicada
             assertEquals(1062, e.getErrorCode());
         }
     }
 
-    // Ane tiene partidas y un juego: la integridad referencial no deja borrarla
     @Test
     public void noSePuedeBorrarUnaSociaConPartidas() {
         try {
             sociaDao.bajaFisica("12345678Z");
             fail("Se ha podido borrar una socia con partidas");
         } catch (SQLException e) {
-            // 1451 = hay filas de otras tablas que apuntan a esta socia
             assertEquals(1451, e.getErrorCode());
         }
     }

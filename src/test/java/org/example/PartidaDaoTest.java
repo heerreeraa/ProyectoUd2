@@ -17,13 +17,11 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-// Pruebas del DAO de partidas: inscripciones, plazas libres, ganadoras y borrado en cascada
 public class PartidaDaoTest {
 
     private PartidaDao partidaDao = new PartidaDaoImpl();
     private int idPrueba;
 
-    // Partida de Hanabi (id 8) para 3 jugadoras
     @BeforeEach
     public void crearPartidaDePrueba() throws SQLException {
         partidaDao.insertar(new Partida(8, "Hanabi", "2026-12-01", "18:00", 3, false));
@@ -52,7 +50,6 @@ public class PartidaDaoTest {
         assertEquals(1, partida.getPlazasLibres());
     }
 
-    // El UNIQUE (id_partida, dni_socia) no deja apuntar dos veces a la misma socia
     @Test
     public void noSePuedeInscribirDosVeces() throws SQLException {
         partidaDao.inscribirSocia(idPrueba, "12345678Z");
@@ -72,7 +69,6 @@ public class PartidaDaoTest {
         assertTrue(partidaDao.obtener(idPrueba).getJugadoras().get(0).isGanadora());
     }
 
-    // Al borrar la partida, el ON DELETE CASCADE borra también sus inscripciones
     @Test
     public void borrarPartidaBorraSusInscripciones() throws SQLException {
         partidaDao.inscribirSocia(idPrueba, "12345678Z");

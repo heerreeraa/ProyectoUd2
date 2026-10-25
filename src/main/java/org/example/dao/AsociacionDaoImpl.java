@@ -7,7 +7,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-// En la tabla asociacion solo hay una fila, la de id 1
 public class AsociacionDaoImpl implements AsociacionDao {
 
     @Override

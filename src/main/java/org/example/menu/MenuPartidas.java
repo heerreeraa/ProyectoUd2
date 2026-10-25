@@ -144,7 +144,6 @@ public class MenuPartidas {
         }
         String fecha = Teclado.leerFecha("Fecha");
         String hora = Teclado.leerHora("Hora");
-        // El número de jugadoras tiene que estar dentro del rango del juego
         int deseados = Teclado.leerEnteroRango("Jugadoras deseadas (" + juego.getMinJugadores() + "-"
                 + juego.getMaxJugadores() + "): ", juego.getMinJugadores(), juego.getMaxJugadores());
 
@@ -174,7 +173,6 @@ public class MenuPartidas {
         partida.setFecha(Teclado.leerFechaOpcional("Fecha", partida.getFecha()));
         partida.setHora(Teclado.leerHoraOpcional("Hora", partida.getHora()));
 
-        // No puede haber menos plazas que jugadoras ya apuntadas
         int inscritas = partida.getJugadoras().size();
         int minimo = juego.getMinJugadores();
         if (inscritas > minimo) {
@@ -241,7 +239,6 @@ public class MenuPartidas {
         }
     }
 
-    // Cada vez que se elige una jugadora se cambia entre ganadora y no ganadora
     private static void marcarGanadoras() throws SQLException {
         Partida partida = pedirPartidaExistente();
         if (partida == null) {
@@ -299,7 +296,6 @@ public class MenuPartidas {
         System.out.println("Partida reactivada.");
     }
 
-    // Muestra las jugadoras numeradas, con el nombre de la socia si lo es
     private static void mostrarJugadoras(Partida partida) throws SQLException {
         if (partida.getJugadoras().isEmpty()) {
             System.out.println("  No hay nadie apuntado.");
@@ -319,7 +315,6 @@ public class MenuPartidas {
         }
     }
 
-    // Devuelve la jugadora elegida o null si se elige 0
     private static Inscripcion elegirJugadora(Partida partida) throws SQLException {
         if (partida.getJugadoras().isEmpty()) {
             System.out.println("No hay nadie apuntado a esta partida.");
@@ -342,7 +337,6 @@ public class MenuPartidas {
         return partida;
     }
 
-    // Una partida a la que todavía se puede apuntar gente
     private static Partida pedirPartidaAbierta() throws SQLException {
         Partida partida = pedirPartidaExistente();
         if (partida == null) {
@@ -363,7 +357,6 @@ public class MenuPartidas {
         return partida;
     }
 
-    // Un juego que existe, no está dado de baja y no está en reparación
     private static Juego pedirJuegoDisponible() throws SQLException {
         int id = Teclado.leerEntero("Número del juego: ");
         Juego juego = juegoDao.obtener(id);

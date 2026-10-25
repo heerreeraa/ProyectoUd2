@@ -1,6 +1,5 @@
 package org.example.estadisticas;
 
-// Una partida del histórico de una socia
 public class LineaHistorico {
     private String fecha;
     private String hora;

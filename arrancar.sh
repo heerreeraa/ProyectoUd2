@@ -1,9 +1,5 @@
 #!/bin/bash
-# Pone en marcha todo el proyecto: base de datos en Docker + aplicación.
-# Uso (en macOS o Linux):  ./arrancar.sh
-# Solo hace falta tener instalado Docker y Java 17 (Maven se descarga solo con mvnw).
 
-# Trabajar siempre desde la carpeta del proyecto
 cd "$(dirname "$0")"
 
 if ! docker info > /dev/null 2>&1; then
@@ -17,7 +13,6 @@ if ! docker compose up -d; then
     exit 1
 fi
 
-# La primera vez el contenedor tarda unos segundos en cargar sql/bbdd.sql
 echo "Esperando a que la base de datos esté lista..."
 intentos=0
 until docker exec mariadb-asociacion mariadb -uroot -proot -e "select 1 from asociacion_juegos.asociacion" > /dev/null 2>&1; do

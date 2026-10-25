@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-// Exporta cualquier lista u objeto a exportaciones/<nombre>.xml o .json
 public class Exportador {
 
     private static final String CARPETA = "exportaciones";
@@ -30,7 +29,6 @@ public class Exportador {
     public static boolean exportarXML(Object datos, String nombre) {
         try {
             XStream xstream = new XStream();
-            // Los alias cambian el nombre completo de la clase (org.example.models.Juego) por uno corto (<juego>)
             xstream.alias("socia", Socia.class);
             xstream.alias("juego", Juego.class);
             xstream.alias("partida", Partida.class);
@@ -42,8 +40,6 @@ public class Exportador {
             xstream.alias("historico", HistoricoSocia.class);
             xstream.alias("linea", LineaHistorico.class);
             xstream.alias("estadisticas", EstadisticasAsociacion.class);
-            // En las listas la raíz se llama como el fichero (<juegos>). XStream trata cualquier
-            // ArrayList como List, así que el alias va sobre List. Un objeto suelto usa su propio alias
             if (datos instanceof List) {
                 xstream.alias(nombre, List.class);
             }
@@ -55,7 +51,6 @@ public class Exportador {
             System.out.println("No se ha podido escribir el fichero XML: " + e.getMessage());
             return false;
         } catch (RuntimeException e) {
-            // XStream lanza excepciones propias si no puede convertir los datos
             System.out.println("No se han podido convertir los datos a XML: " + e.getMessage());
             return false;
         }
@@ -63,7 +58,6 @@ public class Exportador {
 
     public static boolean exportarJSON(Object datos, String nombre) {
         try {
-            // setPrettyPrinting pone saltos de línea y sangría para que el JSON se pueda leer
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             escribirFichero(gson.toJson(datos), nombre + ".json");
             System.out.println("Datos exportados a " + CARPETA + "/" + nombre + ".json");
@@ -77,7 +71,6 @@ public class Exportador {
         }
     }
 
-    // Crea la carpeta si no existe y escribe el texto en el fichero
     private static void escribirFichero(String texto, String nombreFichero) throws IOException {
         File carpeta = new File(CARPETA);
         if (!carpeta.exists()) {

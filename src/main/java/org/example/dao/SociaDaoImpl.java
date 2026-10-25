@@ -9,7 +9,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-// Los métodos lanzan SQLException para que el menú decida qué mensaje mostrar
 public class SociaDaoImpl implements SociaDao {
 
     @Override
@@ -27,7 +26,6 @@ public class SociaDaoImpl implements SociaDao {
         return filas;
     }
 
-    // Devuelve null si no existe
     @Override
     public Socia obtener(String dni) throws SQLException {
         String query = "select * from socia where dni = ?";
@@ -61,7 +59,6 @@ public class SociaDaoImpl implements SociaDao {
         return socias;
     }
 
-    // Búsqueda por varios criterios: los que vienen vacíos (o -1) no se usan
     @Override
     public List<Socia> buscar(String nombre, String apellidos, int edadMinima, int edadMaxima) throws SQLException {
         String query = "select * from socia where eliminada = false";
@@ -85,7 +82,6 @@ public class SociaDaoImpl implements SociaDao {
         query += " order by apellidos, nombre";
 
         PreparedStatement ps = ConexionBD.getInstance().getConnection().prepareStatement(query);
-        // Se rellenan los ? en el mismo orden en que se han añadido
         for (int i = 0; i < parametros.size(); i++) {
             ps.setObject(i + 1, parametros.get(i));
         }
@@ -99,7 +95,6 @@ public class SociaDaoImpl implements SociaDao {
         return socias;
     }
 
-    // El DNI no se modifica porque es la clave primaria
     @Override
     public int modificar(Socia socia) throws SQLException {
         String query = "update socia set nombre = ?, apellidos = ?, telefono = ?, edad = ?, email = ? where dni = ?";
@@ -115,7 +110,6 @@ public class SociaDaoImpl implements SociaDao {
         return filas;
     }
 
-    // Baja lógica: se marca como eliminada pero se conserva su historial
     @Override
     public int bajaLogica(String dni) throws SQLException {
         return cambiarEliminada(dni, true);
@@ -126,7 +120,6 @@ public class SociaDaoImpl implements SociaDao {
         return cambiarEliminada(dni, false);
     }
 
-    // Baja física: si tiene juegos o inscripciones, MariaDB lo impide (error 1451)
     @Override
     public int bajaFisica(String dni) throws SQLException {
         String query = "delete from socia where dni = ?";
@@ -147,7 +140,6 @@ public class SociaDaoImpl implements SociaDao {
         return filas;
     }
 
-    // Pasa la fila actual del ResultSet a un objeto Socia
     private Socia crearSocia(ResultSet rs) throws SQLException {
         return new Socia(rs.getString("dni"),
                 rs.getString("nombre"),

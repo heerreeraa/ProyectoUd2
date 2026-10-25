@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-// Pruebas del DAO de juegos contra la BBDD. Se crea un juego de prueba antes de cada test
 public class JuegoDaoTest {
 
     private JuegoDao juegoDao = new JuegoDaoImpl();
@@ -41,7 +40,6 @@ public class JuegoDaoTest {
         Juego juego = juegoDao.obtener(idPrueba);
         assertEquals("Juego JUnit", juego.getNombre());
         assertEquals(2, juego.getMinJugadores());
-        // Sin propietaria se guarda NULL: es de la asociación
         assertNull(juego.getDniPropietaria());
     }
 
@@ -56,12 +54,10 @@ public class JuegoDaoTest {
         List<Juego> juegos = juegoDao.buscar("JUnit", "", "COOPERATIVO", 3, -1, "");
         assertEquals(1, juegos.size());
 
-        // Con 6 jugadoras no se puede jugar (máximo 4)
         List<Juego> ninguno = juegoDao.buscar("JUnit", "", "", 6, -1, "");
         assertTrue(ninguno.isEmpty());
     }
 
-    // El CHECK de la tabla no deja que el mínimo sea mayor que el máximo
     @Test
     public void minimoMayorQueMaximoNoSeGuarda() throws SQLException {
         Juego juego = juegoDao.obtener(idPrueba);
@@ -74,7 +70,6 @@ public class JuegoDaoTest {
         }
     }
 
-    // Catan (id 1) tiene partidas: no se puede borrar
     @Test
     public void noSePuedeBorrarUnJuegoConPartidas() {
         try {

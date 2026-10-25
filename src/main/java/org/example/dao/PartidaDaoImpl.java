@@ -12,7 +12,6 @@ import java.util.List;
 
 public class PartidaDaoImpl implements PartidaDao {
 
-    // Se une con juego para tener el nombre del juego sin hacer otra consulta
     private static final String SELECT_PARTIDA = "select p.*, j.nombre as nombre_juego from partida p "
             + "join juego j on p.id_juego = j.id";
 
@@ -29,7 +28,6 @@ public class PartidaDaoImpl implements PartidaDao {
         return filas;
     }
 
-    // Devuelve la partida con sus jugadoras, o null si no existe
     @Override
     public Partida obtener(int id) throws SQLException {
         PreparedStatement ps = ConexionBD.getInstance().getConnection().prepareStatement(SELECT_PARTIDA + " where p.id = ?");
@@ -52,7 +50,6 @@ public class PartidaDaoImpl implements PartidaDao {
         return ejecutarLista(ps);
     }
 
-    // Partidas en las que está inscrita una socia
     @Override
     public List<Partida> listarPorSocia(String dni) throws SQLException {
         String query = SELECT_PARTIDA + " where p.eliminada = false and p.id in "
@@ -62,7 +59,6 @@ public class PartidaDaoImpl implements PartidaDao {
         return ejecutarLista(ps);
     }
 
-    // Búsqueda por nombre del juego y por periodo; los criterios vacíos no se usan
     @Override
     public List<Partida> buscar(String juego, String desde, String hasta, boolean soloConPlazas) throws SQLException {
         String query = SELECT_PARTIDA + " where p.eliminada = false";
@@ -82,13 +78,11 @@ public class PartidaDaoImpl implements PartidaDao {
         query += " order by p.fecha, p.hora";
 
         PreparedStatement ps = ConexionBD.getInstance().getConnection().prepareStatement(query);
-        // Se rellenan los ? en el mismo orden en que se han añadido
         for (int i = 0; i < parametros.size(); i++) {
             ps.setObject(i + 1, parametros.get(i));
         }
         List<Partida> partidas = ejecutarLista(ps);
 
-        // Las plazas libres no están en la BBDD, así que este filtro se hace en Java
         if (!soloConPlazas) {
             return partidas;
         }
@@ -125,7 +119,6 @@ public class PartidaDaoImpl implements PartidaDao {
         return cambiarEliminada(id, false);
     }
 
-    // Las inscripciones se borran solas por el ON DELETE CASCADE de partida_jugadora
     @Override
     public int bajaFisica(int id) throws SQLException {
         return ejecutarUpdate("delete from partida where id = ?", id);
@@ -179,7 +172,6 @@ public class PartidaDaoImpl implements PartidaDao {
         return filas;
     }
 
-    // Para los update/delete que solo reciben un id
     private int ejecutarUpdate(String query, int id) throws SQLException {
         PreparedStatement ps = ConexionBD.getInstance().getConnection().prepareStatement(query);
         ps.setInt(1, id);
@@ -196,7 +188,6 @@ public class PartidaDaoImpl implements PartidaDao {
                     rs.getInt("id_juego"),
                     rs.getString("nombre_juego"),
                     rs.getString("fecha"),
-                    // La hora llega como "18:00:00"; nos quedamos con "18:00"
                     rs.getString("hora").substring(0, 5),
                     rs.getInt("jugadores_deseados"),
                     rs.getBoolean("eliminada"));
@@ -205,7 +196,6 @@ public class PartidaDaoImpl implements PartidaDao {
         rs.close();
         ps.close();
 
-        // Después de cerrar el ResultSet, se cargan las jugadoras de cada partida
         for (Partida p : partidas) {
             p.setJugadoras(obtenerJugadoras(p.getId()));
         }

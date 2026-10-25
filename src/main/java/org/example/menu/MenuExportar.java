@@ -3,7 +3,6 @@ package org.example.menu;
 import org.example.export.Exportador;
 import org.example.utils.Teclado;
 
-// Pregunta el formato y llama al Exportador; lo usan los menús de socias, juegos y partidas
 public class MenuExportar {
 
     public static void exportar(Object datos, String nombre) {

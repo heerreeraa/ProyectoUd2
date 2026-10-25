@@ -7,11 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-// Consultas de estadísticas. Solo cuentan las partidas que no están dadas de baja
-// y cuya fecha está entre "desde" y "hasta" (ambas incluidas)
 public class EstadisticasDao {
 
-    // Partes "from ... where" que se repiten en varias consultas. Los dos ? son desde y hasta
     private static final String INSCRIPCIONES_PERIODO = " from partida_jugadora pj"
             + " join partida p on pj.id_partida = p.id"
             + " where p.eliminada = false and p.fecha between ? and ?";
@@ -24,7 +21,6 @@ public class EstadisticasDao {
             + " join socia s on pj.dni_socia = s.dni"
             + " where p.eliminada = false and p.fecha between ? and ?";
 
-    // Devuelve null si no existe la socia
     public HistoricoSocia historicoSocia(String dni, String desde, String hasta) throws SQLException {
         PreparedStatement ps = ConexionBD.getInstance().getConnection()
                 .prepareStatement("select nombre, apellidos from socia where dni = ?");
@@ -44,7 +40,6 @@ public class EstadisticasDao {
             return null;
         }
 
-        // Cada partida en la que ha estado inscrita, con el juego y si ganó
         String query = "select p.fecha, p.hora, j.nombre, pj.ganadora" + INSCRIPCIONES_CON_JUEGO
                 + " and pj.dni_socia = ? order by p.fecha, p.hora";
         ps = ConexionBD.getInstance().getConnection().prepareStatement(query);
@@ -69,12 +64,10 @@ public class EstadisticasDao {
         int jugadas = historico.getPartidas().size();
         historico.setPartidasJugadas(jugadas);
         historico.setVictorias(victorias);
-        // Si no ha jugado ninguna partida el porcentaje es 0 (así no se divide entre cero)
         if (jugadas > 0) {
             historico.setPorcentajeVictorias(victorias * 100.0 / jugadas);
         }
 
-        // El juego con más partidas: se agrupa por juego y se coge el primero
         query = "select j.nombre, count(*) as total" + INSCRIPCIONES_CON_JUEGO
                 + " and pj.dni_socia = ? group by j.id, j.nombre order by total desc limit 1";
         historico.setJuegoMasJugado(primerResultado(query, desde, hasta, dni, "partida"));
@@ -86,7 +79,6 @@ public class EstadisticasDao {
         e.setDesde(desde);
         e.setHasta(hasta);
 
-        // Socias y juegos: datos actuales (no dependen del periodo)
         e.setSociasActivas(contar("select count(*) from socia where eliminada = false"));
         e.setCompetitivos(contar("select count(*) from juego where eliminado = false and tipo = 'COMPETITIVO'"));
         e.setCooperativos(contar("select count(*) from juego where eliminado = false and tipo = 'COOPERATIVO'"));
@@ -94,13 +86,11 @@ public class EstadisticasDao {
         e.setJuegosDeSocias(contar("select count(*) from juego where eliminado = false and dni_propietaria is not null"));
         e.setJuegosPorEstado(juegosPorEstado());
 
-        // Partidas del periodo
         int partidas = contarPeriodo("select count(*) from partida p where p.eliminada = false and p.fecha between ? and ?", desde, hasta);
         int inscritas = contarPeriodo("select count(*)" + INSCRIPCIONES_PERIODO, desde, hasta);
         int deseadas = contarPeriodo("select sum(p.jugadores_deseados) from partida p where p.eliminada = false and p.fecha between ? and ?", desde, hasta);
         e.setPartidasJugadas(partidas);
         e.setInvitadas(contarPeriodo("select count(*)" + INSCRIPCIONES_PERIODO + " and pj.dni_socia is null", desde, hasta));
-        // Las medias se dejan en 0 si no hay partidas (para no dividir entre cero)
         if (partidas > 0) {
             e.setMediaJugadorasPorPartida((double) inscritas / partidas);
         }
@@ -108,7 +98,6 @@ public class EstadisticasDao {
             e.setOcupacionMedia(inscritas * 100.0 / deseadas);
         }
 
-        // Los 5 juegos con más partidas en el periodo
         String query = "select j.nombre, count(*) as total from partida p join juego j on p.id_juego = j.id"
                 + " where p.eliminada = false and p.fecha between ? and ? group by j.id, j.nombre order by total desc limit 5";
         PreparedStatement ps = ConexionBD.getInstance().getConnection().prepareStatement(query);
@@ -123,7 +112,6 @@ public class EstadisticasDao {
         ps.close();
         e.setJuegosMasJugados(juegos);
 
-        // La socia con más partidas y la socia con más victorias
         String consultaSocia = "select concat(s.nombre, ' ', s.apellidos) as nombre, count(*) as total" + INSCRIPCIONES_CON_SOCIA;
         e.setSociaConMasPartidas(primerResultado(consultaSocia + " group by s.dni order by total desc limit 1",
                 desde, hasta, null, "partida"));
@@ -132,7 +120,6 @@ public class EstadisticasDao {
         return e;
     }
 
-    // Texto como "DISPONIBLE: 6, PRESTADO: 1, EN_REPARACION: 1"
     private String juegosPorEstado() throws SQLException {
         String query = "select estado, count(*) as total from juego where eliminado = false group by estado order by estado";
         PreparedStatement ps = ConexionBD.getInstance().getConnection().prepareStatement(query);
@@ -149,7 +136,6 @@ public class EstadisticasDao {
         return texto;
     }
 
-    // Para las consultas "select count(*)" sin parámetros
     private int contar(String query) throws SQLException {
         PreparedStatement ps = ConexionBD.getInstance().getConnection().prepareStatement(query);
         ResultSet rs = ps.executeQuery();
@@ -160,7 +146,6 @@ public class EstadisticasDao {
         return total;
     }
 
-    // Para las consultas de un número con los dos ? del periodo (sum devuelve NULL si no hay filas y getInt lo pasa a 0)
     private int contarPeriodo(String query, String desde, String hasta) throws SQLException {
         PreparedStatement ps = ConexionBD.getInstance().getConnection().prepareStatement(query);
         ps.setString(1, desde);
@@ -173,7 +158,6 @@ public class EstadisticasDao {
         return total;
     }
 
-    // "1 partida", "3 partidas"
     private String cantidad(int numero, String palabra) {
         if (numero == 1) {
             return numero + " " + palabra;
@@ -181,8 +165,6 @@ public class EstadisticasDao {
         return numero + " " + palabra + "s";
     }
 
-    // Devuelve la primera fila como "Nombre (3 partidas)", o "Ninguna" si no hay datos.
-    // Si dni no es null se usa como tercer parámetro
     private String primerResultado(String query, String desde, String hasta, String dni, String unidad) throws SQLException {
         PreparedStatement ps = ConexionBD.getInstance().getConnection().prepareStatement(query);
         ps.setString(1, desde);

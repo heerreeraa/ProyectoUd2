@@ -1,6 +1,5 @@
 package org.example.models;
 
-// Datos de la propia asociación (en la BBDD solo hay una fila)
 public class Asociacion {
     private int id;
     private String razonSocial;

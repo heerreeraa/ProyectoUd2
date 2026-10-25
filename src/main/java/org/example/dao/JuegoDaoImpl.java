@@ -49,7 +49,6 @@ public class JuegoDaoImpl implements JuegoDao {
         return ejecutarLista(ps);
     }
 
-    // Juegos que pertenecen a una socia
     @Override
     public List<Juego> listarPorPropietaria(String dni) throws SQLException {
         String query = "select * from juego where dni_propietaria = ? and eliminado = false order by nombre";
@@ -58,7 +57,6 @@ public class JuegoDaoImpl implements JuegoDao {
         return ejecutarLista(ps);
     }
 
-    // Búsqueda por varios criterios: los que vienen vacíos (o -1) no se usan
     @Override
     public List<Juego> buscar(String nombre, String tematica, String tipo, int jugadoras, int duracionMaxima,
                               String estado) throws SQLException {
@@ -76,7 +74,6 @@ public class JuegoDaoImpl implements JuegoDao {
             query += " and tipo = ?";
             parametros.add(tipo);
         }
-        // Juegos en los que se puede jugar con ese número de jugadoras
         if (jugadoras != -1) {
             query += " and min_jugadores <= ? and max_jugadores >= ?";
             parametros.add(jugadoras);
@@ -93,7 +90,6 @@ public class JuegoDaoImpl implements JuegoDao {
         query += " order by nombre";
 
         PreparedStatement ps = ConexionBD.getInstance().getConnection().prepareStatement(query);
-        // Se rellenan los ? en el mismo orden en que se han añadido
         for (int i = 0; i < parametros.size(); i++) {
             ps.setObject(i + 1, parametros.get(i));
         }
@@ -134,7 +130,6 @@ public class JuegoDaoImpl implements JuegoDao {
         return cambiarEliminado(id, false);
     }
 
-    // Si el juego tiene partidas, MariaDB no deja borrarlo (error 1451)
     @Override
     public int bajaFisica(int id) throws SQLException {
         String query = "delete from juego where id = ?";
@@ -155,7 +150,6 @@ public class JuegoDaoImpl implements JuegoDao {
         return filas;
     }
 
-    // Los 12 primeros parámetros son iguales en el insert y en el update
     private void rellenarDatos(PreparedStatement ps, Juego juego) throws SQLException {
         ps.setString(1, juego.getNombre());
         ps.setString(2, juego.getAutores());
@@ -167,7 +161,6 @@ public class JuegoDaoImpl implements JuegoDao {
         ps.setString(8, juego.getTipo());
         ps.setString(9, juego.getUbicacion());
         ps.setString(10, juego.getEstado());
-        // Si no tiene propietaria se guarda NULL (es de la asociación)
         if (juego.getDniPropietaria() == null) {
             ps.setNull(11, Types.VARCHAR);
         } else {

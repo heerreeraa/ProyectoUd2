@@ -7,15 +7,12 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-// Singleton: toda la aplicación comparte una única conexión con la BBDD
 public class ConexionBD {
 
     private static ConexionBD instance;
     private Connection connection;
 
-    // El constructor es privado para que nadie pueda hacer "new ConexionBD()"
     private ConexionBD() throws SQLException {
-        // Valores por defecto por si no se puede leer config.properties
         String host = "localhost";
         String puerto = "3306";
         String bbdd = "asociacion_juegos";
@@ -44,9 +41,6 @@ public class ConexionBD {
         return connection;
     }
 
-    // Devuelve siempre la misma instancia; si la conexión ya no funciona, crea otra.
-    // isValid(2) pregunta al servidor (máximo 2 segundos): así, si el servidor se ha caído
-    // y vuelve a arrancar, la aplicación se reconecta sola
     public static ConexionBD getInstance() throws SQLException {
         if (instance == null) {
             instance = new ConexionBD();
@@ -56,7 +50,6 @@ public class ConexionBD {
         return instance;
     }
 
-    // Se llama una sola vez al salir de la aplicación
     public static void cerrar() {
         try {
             if (instance != null && !instance.getConnection().isClosed()) {

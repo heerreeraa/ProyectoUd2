@@ -29,73 +29,53 @@ public class Metadatos {
         Connection conexion = ConexionBD.getInstance().getConnection();
         DatabaseMetaData metadatos = conexion.getMetaData();
         String catalogo = conexion.getCatalog();
-        ResultSet resultado = null;
-        ArrayList<InfoTabla> tablas = new ArrayList<>();
 
-        try {
-            resultado = metadatos.getTables(catalogo, null, "%", new String[]{"TABLE"});
-            while (resultado.next()) {
-                InfoTabla tabla = new InfoTabla();
-                // En MariaDB el nombre de la BBDD viene como catálogo (TABLE_CAT) y el esquema llega vacío
-                tabla.setEsquema(resultado.getString("TABLE_CAT"));
-                tabla.setNombre(resultado.getString("TABLE_NAME"));
-                tabla.setClavePrimaria(obtenerClavePrimaria(metadatos, catalogo, null, tabla.getNombre()));
-                tabla.setColumnas(obtenerColumnas(metadatos, catalogo, null, tabla.getNombre()));
-                tablas.add(tabla);
-            }
-        } finally {
-            if (resultado != null) {
-                resultado.close();
-            }
+        ResultSet rs = metadatos.getTables(catalogo, null, "%", new String[]{"TABLE"});
+        ArrayList<InfoTabla> tablas = new ArrayList<>();
+        while (rs.next()) {
+            InfoTabla tabla = new InfoTabla();
+            tabla.setEsquema(rs.getString("TABLE_CAT"));
+            tabla.setNombre(rs.getString("TABLE_NAME"));
+            tablas.add(tabla);
+        }
+        rs.close();
+
+        for (InfoTabla tabla : tablas) {
+            tabla.setClavePrimaria(obtenerClavePrimaria(metadatos, catalogo, tabla.getNombre()));
+            tabla.setColumnas(obtenerColumnas(metadatos, catalogo, tabla.getNombre()));
         }
         return tablas;
     }
 
     public static ArrayList<InfoColumna> obtenerColumnas(String tabla) throws SQLException {
         Connection conexion = ConexionBD.getInstance().getConnection();
-        return obtenerColumnas(conexion.getMetaData(), conexion.getCatalog(), null, tabla);
+        return obtenerColumnas(conexion.getMetaData(), conexion.getCatalog(), tabla);
     }
 
-    private static ArrayList<String> obtenerClavePrimaria(DatabaseMetaData metadatos, String catalogo,
-                                                           String esquema, String tabla) throws SQLException {
-        ResultSet resultado = null;
+    private static ArrayList<String> obtenerClavePrimaria(DatabaseMetaData metadatos, String catalogo, String tabla) throws SQLException {
+        ResultSet rs = metadatos.getPrimaryKeys(catalogo, null, tabla);
         ArrayList<String> clavePrimaria = new ArrayList<>();
-
-        try {
-            resultado = metadatos.getPrimaryKeys(catalogo, esquema, tabla);
-            while (resultado.next()) {
-                clavePrimaria.add(resultado.getString("COLUMN_NAME"));
-            }
-        } finally {
-            if (resultado != null) {
-                resultado.close();
-            }
+        while (rs.next()) {
+            clavePrimaria.add(rs.getString("COLUMN_NAME"));
         }
+        rs.close();
         return clavePrimaria;
     }
 
-    private static ArrayList<InfoColumna> obtenerColumnas(DatabaseMetaData metadatos, String catalogo,
-                                                          String esquema, String tabla) throws SQLException {
-        ResultSet resultado = null;
+    private static ArrayList<InfoColumna> obtenerColumnas(DatabaseMetaData metadatos, String catalogo, String tabla) throws SQLException {
+        ResultSet rs = metadatos.getColumns(catalogo, null, tabla, "%");
         ArrayList<InfoColumna> columnas = new ArrayList<>();
-
-        try {
-            resultado = metadatos.getColumns(catalogo, esquema, tabla, "%");
-            while (resultado.next()) {
-                InfoColumna columna = new InfoColumna();
-                columna.setNombre(resultado.getString("COLUMN_NAME"));
-                columna.setTipo(resultado.getString("TYPE_NAME"));
-                columna.setTamanio(resultado.getInt("COLUMN_SIZE"));
-                columna.setAdmiteNulos(resultado.getInt("NULLABLE") != DatabaseMetaData.columnNoNulls);
-                columna.setAutoincremental("YES".equalsIgnoreCase(resultado.getString("IS_AUTOINCREMENT")));
-                columna.setValorPorDefecto(resultado.getString("COLUMN_DEF"));
-                columnas.add(columna);
-            }
-        } finally {
-            if (resultado != null) {
-                resultado.close();
-            }
+        while (rs.next()) {
+            InfoColumna columna = new InfoColumna();
+            columna.setNombre(rs.getString("COLUMN_NAME"));
+            columna.setTipo(rs.getString("TYPE_NAME"));
+            columna.setTamanio(rs.getInt("COLUMN_SIZE"));
+            columna.setAdmiteNulos(rs.getInt("NULLABLE") == DatabaseMetaData.columnNullable);
+            columna.setAutoincremental(rs.getString("IS_AUTOINCREMENT").equals("YES"));
+            columna.setValorPorDefecto(rs.getString("COLUMN_DEF"));
+            columnas.add(columna);
         }
+        rs.close();
         return columnas;
     }
 }

@@ -38,7 +38,6 @@ public class MenuSocias {
             System.out.println("0. Volver");
             opcion = Teclado.leerEntero("Elige una opción: ");
 
-            // Cualquier error de BBDD se captura aquí y se muestra traducido
             try {
                 switch (opcion) {
                     case 1:
@@ -190,7 +189,6 @@ public class MenuSocias {
                 sociaDao.bajaFisica(socia.getDni());
                 System.out.println("Socia borrada.");
             } catch (SQLException e) {
-                // 1451: tiene juegos o inscripciones, la integridad referencial no deja borrarla
                 if (e.getErrorCode() == 1451) {
                     System.out.println("No se puede borrar porque tiene juegos o ha participado en partidas.");
                     if (Teclado.leerSiNo("¿Quieres darla de baja lógica?")) {
@@ -217,7 +215,6 @@ public class MenuSocias {
         System.out.println("Socia reactivada.");
     }
 
-    // Pide un DNI y devuelve la socia, o null si no existe
     private static Socia pedirSociaExistente() throws SQLException {
         String dni = Teclado.leerTexto("DNI/NIE/pasaporte: ").toUpperCase();
         Socia socia = sociaDao.obtener(dni);
@@ -237,7 +234,6 @@ public class MenuSocias {
         }
     }
 
-    // Si actual es null el campo es obligatorio (alta); si no, se puede dejar como estaba
     private static String leerTelefono(String actual) {
         while (true) {
             String telefono;

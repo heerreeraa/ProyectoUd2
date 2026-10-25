@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-// Pruebas de las validaciones de formato (no necesitan la base de datos)
 public class ValidadorTest {
 
     @Test

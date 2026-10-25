@@ -1,7 +1,4 @@
 @echo off
-REM Pone en marcha todo el proyecto en Windows: base de datos en Docker + aplicación.
-REM Uso: doble clic en arrancar.bat o ejecutarlo desde la consola.
-REM Solo hace falta tener instalado Docker Desktop y Java 17 (Maven se descarga solo con mvnw).
 chcp 65001 > nul
 cd /d "%~dp0"
 

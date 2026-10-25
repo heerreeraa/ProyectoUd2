@@ -8,7 +8,6 @@ import java.sql.SQLException;
 
 public class App {
     public static void main(String[] args) {
-        // Sin conexión no tiene sentido seguir
         try {
             ConexionBD.getInstance();
         } catch (SQLException e) {
@@ -17,13 +16,11 @@ public class App {
             return;
         }
 
-        // Sin un usuario válido no se entra (las credenciales están en datos/usuarios.dat)
         if (!GestorUsuarios.login()) {
             ConexionBD.cerrar();
             return;
         }
 
-        // Red de seguridad: si algo se escapa, se muestra un mensaje en vez de romper la aplicación
         try {
             MenuPrincipal.mostrar();
         } catch (Exception e) {

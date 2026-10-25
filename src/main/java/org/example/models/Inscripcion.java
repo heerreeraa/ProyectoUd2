@@ -1,6 +1,5 @@
 package org.example.models;
 
-// Una jugadora apuntada a una partida: una socia (dniSocia) o una invitada (nombreInvitada)
 public class Inscripcion {
     private int id;
     private int idPartida;

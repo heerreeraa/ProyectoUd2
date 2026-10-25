@@ -21,8 +21,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 
-// Acceso con usuario y contraseña. Los usuarios se guardan en un fichero binario
-// y cada entrada, salida o fallo se apunta en un fichero de texto.
 public class GestorUsuarios {
     public static final String FICHERO_USUARIOS = "datos/usuarios.dat";
     public static final String FICHERO_SESIONES = "datos/sesiones.log";
@@ -31,7 +29,6 @@ public class GestorUsuarios {
     private static String usuarioActual;
 
     public static boolean login() {
-        // La primera vez no hay usuarios: se obliga a crear el administrador
         if (!new File(FICHERO_USUARIOS).exists()) {
             System.out.println("Es la primera vez que se ejecuta. Crea el usuario administrador.");
             while (!crearUsuario()) {
@@ -66,11 +63,9 @@ public class GestorUsuarios {
         return usuarioActual;
     }
 
-    // Añade una línea al final del registro: "2026-10-19 21:30:12 | admin | ENTRADA"
     public static void registrarSesion(String usuario, String accion) {
         try {
             crearCarpetaDatos();
-            // El true del FileWriter hace que se añada al final en vez de sobrescribir el fichero
             BufferedWriter escritor = new BufferedWriter(new FileWriter(FICHERO_SESIONES, StandardCharsets.UTF_8, true));
             String fecha = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             escritor.write(fecha + " | " + usuario + " | " + accion);
@@ -81,7 +76,6 @@ public class GestorUsuarios {
         }
     }
 
-    // Devuelve true si el usuario se ha creado
     public static boolean crearUsuario() {
         ArrayList<Usuario> usuarios = leerUsuarios();
         if (usuarios == null) {
@@ -125,7 +119,6 @@ public class GestorUsuarios {
             return;
         }
 
-        // Al cambiar la contraseña también se genera una sal nueva
         String sal = generarSal();
         usuario.setSal(sal);
         usuario.setHashPassword(calcularHash(password, sal));
@@ -153,7 +146,6 @@ public class GestorUsuarios {
         }
     }
 
-    // Pide la contraseña dos veces; devuelve null si no coinciden
     private static String pedirPasswordNueva() {
         String password = Teclado.leerTexto("Contraseña: ");
         String repetida = Teclado.leerTexto("Repite la contraseña: ");
@@ -164,13 +156,10 @@ public class GestorUsuarios {
         return password;
     }
 
-    // Se calcula el hash con la sal guardada y se compara con el hash guardado
     private static boolean passwordCorrecta(Usuario usuario, String password) {
         return calcularHash(password, usuario.getSal()).equals(usuario.getHashPassword());
     }
 
-    // Lee la lista de usuarios del fichero binario. Si no existe, devuelve una lista vacía;
-    // si está dañado, avisa y devuelve null
     @SuppressWarnings("unchecked")
     private static ArrayList<Usuario> leerUsuarios() {
         File fichero = new File(FICHERO_USUARIOS);
@@ -191,7 +180,6 @@ public class GestorUsuarios {
         }
     }
 
-    // Guarda la lista entera de usuarios (se sobrescribe el fichero)
     private static boolean guardarUsuarios(ArrayList<Usuario> usuarios) {
         try {
             crearCarpetaDatos();
@@ -212,8 +200,6 @@ public class GestorUsuarios {
         }
     }
 
-    // Hash SHA-256 de la sal + la contraseña, en Base64. La contraseña nunca se guarda tal cual:
-    // al iniciar sesión se vuelve a calcular el hash y se compara
     private static String calcularHash(String password, String sal) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -221,14 +207,11 @@ public class GestorUsuarios {
             byte[] hash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
             return Base64.getEncoder().encodeToString(hash);
         } catch (NoSuchAlgorithmException e) {
-            // SHA-256 viene siempre con Java, así que esto no debería pasar nunca
             System.out.println("No está disponible el algoritmo SHA-256.");
             return "";
         }
     }
 
-    // La sal son 16 bytes aleatorios distintos para cada usuario. Así dos usuarios con la misma
-    // contraseña tienen hashes distintos y no se pueden usar tablas de hashes ya calculados
     private static String generarSal() {
         byte[] bytes = new byte[16];
         new SecureRandom().nextBytes(bytes);

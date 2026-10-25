@@ -2,7 +2,6 @@ package org.example.metadatos;
 
 import java.util.ArrayList;
 
-// Junta los datos de la BBDD y todas sus tablas para exportarlos en un solo fichero
 public class MetadatosCompletos {
     private InfoBBDD bbdd;
     private ArrayList<InfoTabla> tablas = new ArrayList<>();

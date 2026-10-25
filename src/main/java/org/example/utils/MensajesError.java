@@ -2,11 +2,9 @@ package org.example.utils;
 
 import java.sql.SQLException;
 
-// Traduce los errores de MariaDB a mensajes que entienda la usuaria
 public class MensajesError {
 
     public static String traducir(SQLException e) {
-        // Códigos de error de MariaDB
         switch (e.getErrorCode()) {
             case 1062:
                 return "Ya existe un registro con esa clave.";
@@ -17,7 +15,6 @@ public class MensajesError {
             case 4025:
                 return "Los datos no cumplen las reglas de la base de datos (por ejemplo, mínimo de jugadoras mayor que el máximo).";
         }
-        // Los SQLState que empiezan por 08 son errores de conexión
         if (e.getSQLState() != null && e.getSQLState().startsWith("08")) {
             return "Se ha perdido la conexión con la base de datos. Comprueba que el servidor está arrancado.";
         }

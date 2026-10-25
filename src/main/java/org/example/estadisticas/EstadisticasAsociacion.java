@@ -2,7 +2,6 @@ package org.example.estadisticas;
 
 import java.util.ArrayList;
 
-// Estadísticas generales de la asociación en un periodo
 public class EstadisticasAsociacion {
     private String desde;
     private String hasta;
@@ -162,7 +161,6 @@ public class EstadisticasAsociacion {
 
     @Override
     public String toString() {
-        // La lista de juegos se pone separada por comas, o "Ninguno" si no hay partidas
         String juegos = "Ninguno";
         if (!juegosMasJugados.isEmpty()) {
             juegos = String.join(", ", juegosMasJugados);

@@ -1,12 +1,7 @@
--- Base de datos de la asociación de juegos de mesa
--- Se carga sola al crear el contenedor (docker compose up -d)
--- o a mano con: docker exec -i mariadb-asociacion mariadb -uroot -proot < sql/bbdd.sql
-
 DROP DATABASE IF EXISTS asociacion_juegos;
 CREATE DATABASE asociacion_juegos CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci;
 USE asociacion_juegos;
 
--- Datos de la propia asociación (solo habrá una fila)
 CREATE TABLE asociacion (
     id INT PRIMARY KEY,
     razon_social VARCHAR(100) NOT NULL,
@@ -17,7 +12,6 @@ CREATE TABLE asociacion (
     fecha_apertura DATE
 );
 
--- El DNI/NIE/pasaporte es la clave primaria porque ya identifica a cada socia
 CREATE TABLE socia (
     dni VARCHAR(15) PRIMARY KEY,
     nombre VARCHAR(50) NOT NULL,
@@ -29,7 +23,6 @@ CREATE TABLE socia (
     CONSTRAINT chk_edad CHECK (edad >= 0 AND edad <= 120)
 );
 
--- Si dni_propietaria es NULL el juego es de la asociación
 CREATE TABLE juego (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
@@ -49,7 +42,6 @@ CREATE TABLE juego (
     CONSTRAINT chk_jugadores CHECK (min_jugadores >= 1 AND min_jugadores <= max_jugadores)
 );
 
--- Las plazas libres no se guardan: se calculan con jugadores_deseados - inscritas
 CREATE TABLE partida (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_juego INT NOT NULL,
@@ -60,7 +52,6 @@ CREATE TABLE partida (
     CONSTRAINT fk_partida_juego FOREIGN KEY (id_juego) REFERENCES juego(id)
 );
 
--- Relación N:M entre partida y socia. Si dni_socia es NULL es una invitada
 CREATE TABLE partida_jugadora (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_partida INT NOT NULL,
@@ -72,8 +63,6 @@ CREATE TABLE partida_jugadora (
     CONSTRAINT uq_socia_partida UNIQUE (id_partida, dni_socia),
     CONSTRAINT chk_socia_o_invitada CHECK (dni_socia IS NOT NULL OR nombre_invitada IS NOT NULL)
 );
-
--- ---------------- Datos de prueba ----------------
 
 INSERT INTO asociacion VALUES
 (1, 'Asociación de Juegos de Mesa Mahai Jokoak', 'G01234567', 'Calle Cuchillería 24, 01001 Vitoria-Gasteiz',

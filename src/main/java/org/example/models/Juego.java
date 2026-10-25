@@ -1,6 +1,5 @@
 package org.example.models;
 
-// Un juego de mesa. Si dniPropietaria es null, el juego es de la asociación
 public class Juego {
     private int id;
     private String nombre;

@@ -18,7 +18,6 @@ public class MenuJuegos {
     private static JuegoDao juegoDao = new JuegoDaoImpl();
     private static SociaDao sociaDao = new SociaDaoImpl();
 
-    // Límites razonables para no aceptar datos absurdos
     private static final int MAX_JUGADORES = 30;
     private static final int MAX_DURACION = 600;
 
@@ -148,7 +147,6 @@ public class MenuJuegos {
         String tipo = elegirTipo(null);
         String ubicacion = Teclado.leerTexto("Ubicación (por ejemplo Estantería A1): ");
         String dniPropietaria = elegirPropietaria(null);
-        // La fecha de alta es la de hoy y el juego empieza disponible
         String fechaAlta = LocalDate.now().toString();
 
         Juego juego = new Juego(nombre, autores, descripcion, min, max, duracion, tematica, tipo, ubicacion,
@@ -168,7 +166,6 @@ public class MenuJuegos {
         juego.setDescripcion(Teclado.leerTextoOpcional("Descripción", juego.getDescripcion()));
         juego.setMinJugadores(Teclado.leerEnteroOpcional("Mínimo de jugadoras", juego.getMinJugadores(), 1, MAX_JUGADORES));
         juego.setMaxJugadores(Teclado.leerEnteroOpcional("Máximo de jugadoras", juego.getMaxJugadores(), 1, MAX_JUGADORES));
-        // El máximo no puede quedar por debajo del mínimo
         while (juego.getMaxJugadores() < juego.getMinJugadores()) {
             System.out.println("El máximo no puede ser menor que el mínimo (" + juego.getMinJugadores() + ").");
             juego.setMaxJugadores(Teclado.leerEnteroRango("Máximo de jugadoras: ", juego.getMinJugadores(), MAX_JUGADORES));
@@ -227,7 +224,6 @@ public class MenuJuegos {
                 juegoDao.bajaFisica(juego.getId());
                 System.out.println("Juego borrado.");
             } catch (SQLException e) {
-                // 1451: hay partidas de este juego
                 if (e.getErrorCode() == 1451) {
                     System.out.println("No se puede borrar porque hay partidas de este juego.");
                     if (Teclado.leerSiNo("¿Quieres darlo de baja lógica?")) {
@@ -263,7 +259,6 @@ public class MenuJuegos {
         return juego;
     }
 
-    // Si actual es null es obligatorio elegir; si no, con Enter se queda igual
     private static String elegirTipo(String actual) {
         while (true) {
             String texto;
@@ -285,7 +280,6 @@ public class MenuJuegos {
         }
     }
 
-    // Devuelve el DNI de la socia propietaria, o null si el juego es de la asociación
     private static String elegirPropietaria(Juego juego) throws SQLException {
         if (juego != null) {
             String actual = juego.getDniPropietaria() == null ? "asociación" : juego.getDniPropietaria();

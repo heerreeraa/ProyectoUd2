@@ -72,7 +72,6 @@ public class MenuEstadisticas {
         }
     }
 
-    // La fecha final no puede ser anterior a la inicial
     private static String leerHasta(String desde) {
         String hasta = Teclado.leerFecha("Hasta");
         while (LocalDate.parse(hasta).isBefore(LocalDate.parse(desde))) {

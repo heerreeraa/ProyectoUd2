@@ -1,6 +1,5 @@
 package org.example.models;
 
-// Una socia de la asociación. La clave es el DNI/NIE/pasaporte
 public class Socia {
     private String dni;
     private String nombre;

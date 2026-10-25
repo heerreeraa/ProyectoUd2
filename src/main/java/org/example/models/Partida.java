@@ -2,7 +2,6 @@ package org.example.models;
 
 import java.util.ArrayList;
 
-// Una partida de un juego. Las jugadoras inscritas van en la lista jugadoras
 public class Partida {
     private int id;
     private int idJuego;
@@ -99,7 +98,6 @@ public class Partida {
         this.jugadoras = jugadoras;
     }
 
-    // Las plazas libres no se guardan en la BBDD, se calculan
     public int getPlazasLibres() {
         return jugadoresDeseados - jugadoras.size();
     }

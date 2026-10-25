@@ -58,7 +58,6 @@ public class MenuPrincipal {
         } while (opcion != 0);
     }
 
-    // Datos más relevantes de la asociación encima del menú
     private static void mostrarCabecera() {
         System.out.println("\n==========================================");
         try {

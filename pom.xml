@@ -17,31 +17,26 @@
   </properties>
 
   <dependencies>
-    <!-- Driver JDBC para conectarse a MariaDB -->
     <dependency>
       <groupId>org.mariadb.jdbc</groupId>
       <artifactId>mariadb-java-client</artifactId>
       <version>3.5.1</version>
     </dependency>
-    <!-- Quita el aviso "SLF4J: No SLF4J providers" que saca el driver al arrancar -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-nop</artifactId>
       <version>2.0.16</version>
     </dependency>
-    <!-- Exportar a XML (la misma librería que en la UD1) -->
     <dependency>
       <groupId>com.thoughtworks.xstream</groupId>
       <artifactId>xstream</artifactId>
       <version>1.4.20</version>
     </dependency>
-    <!-- Exportar a JSON -->
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
       <version>2.11.0</version>
     </dependency>
-    <!-- Tests -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
@@ -52,13 +47,11 @@
 
   <build>
     <plugins>
-      <!-- Necesario para que Maven ejecute los tests de JUnit 5 -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.2.5</version>
       </plugin>
-      <!-- Permite ejecutar la aplicación desde terminal con: ./mvnw compile exec:java -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>

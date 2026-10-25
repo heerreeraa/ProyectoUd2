@@ -66,7 +66,6 @@ public class MenuMetadatos {
     private static void verColumnas() throws SQLException {
         String tabla = Teclado.leerTexto("Nombre de la tabla: ").toLowerCase();
         ArrayList<InfoColumna> columnas = Metadatos.obtenerColumnas(tabla);
-        // Si la tabla no existe, getColumns no da error: devuelve una lista vacía
         if (columnas.isEmpty()) {
             System.out.println("No existe ninguna tabla llamada " + tabla + ".");
             return;

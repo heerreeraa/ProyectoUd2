@@ -2,7 +2,6 @@ package org.example.estadisticas;
 
 import java.util.ArrayList;
 
-// Partidas de una socia en un periodo y su resumen
 public class HistoricoSocia {
     private String dni;
     private String nombre;

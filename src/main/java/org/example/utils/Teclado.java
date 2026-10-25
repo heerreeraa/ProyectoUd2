@@ -5,13 +5,10 @@ import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
-// Lectura de teclado que nunca lanza excepciones: si el dato no vale, se vuelve a pedir
 public class Teclado {
 
-    // Un único Scanner para toda la aplicación
     private static Scanner sc = new Scanner(System.in);
 
-    // Lee una línea; si se cierra la entrada (Ctrl+D) se sale de la aplicación
     private static String leerLinea(String mensaje) {
         System.out.print(mensaje);
         if (!sc.hasNextLine()) {
@@ -22,7 +19,6 @@ public class Teclado {
         return sc.nextLine().trim();
     }
 
-    // Texto obligatorio (no admite vacío)
     public static String leerTexto(String mensaje) {
         String texto = leerLinea(mensaje);
         while (texto.isEmpty()) {
@@ -32,7 +28,6 @@ public class Teclado {
         return texto;
     }
 
-    // Texto que puede dejarse vacío (para "dejar en blanco si no quieres cambiarlo")
     public static String leerTextoOpcional(String mensaje) {
         return leerLinea(mensaje);
     }
@@ -57,7 +52,6 @@ public class Teclado {
         return numero;
     }
 
-    // Devuelve la fecha como texto "yyyy-MM-dd" ya comprobada
     public static String leerFecha(String mensaje) {
         while (true) {
             String texto = leerLinea(mensaje + " (aaaa-mm-dd): ");
@@ -70,7 +64,6 @@ public class Teclado {
         }
     }
 
-    // Devuelve la hora como texto "HH:mm" ya comprobada
     public static String leerHora(String mensaje) {
         while (true) {
             String texto = leerLinea(mensaje + " (hh:mm): ");
@@ -83,7 +76,6 @@ public class Teclado {
         }
     }
 
-    // Para modificar: si se deja vacío se queda el valor actual
     public static int leerEnteroOpcional(String mensaje, int actual, int min, int max) {
         while (true) {
             String texto = leerLinea(mensaje + " [" + actual + "]: ");
@@ -102,7 +94,6 @@ public class Teclado {
         }
     }
 
-    // Para búsquedas: devuelve -1 si se deja vacío (criterio que no se usa)
     public static int leerEnteroOVacio(String mensaje, int min, int max) {
         while (true) {
             String texto = leerLinea(mensaje);
@@ -121,7 +112,6 @@ public class Teclado {
         }
     }
 
-    // Para búsquedas: devuelve "" si se deja vacío
     public static String leerFechaOVacio(String mensaje) {
         while (true) {
             String texto = leerLinea(mensaje + " (aaaa-mm-dd): ");
@@ -137,7 +127,6 @@ public class Teclado {
         }
     }
 
-    // Para modificar: si se deja vacío se queda la fecha actual
     public static String leerFechaOpcional(String mensaje, String actual) {
         while (true) {
             String texto = leerLinea(mensaje + " [" + actual + "]: ");
@@ -153,7 +142,6 @@ public class Teclado {
         }
     }
 
-    // Para modificar: si se deja vacío se queda la hora actual
     public static String leerHoraOpcional(String mensaje, String actual) {
         while (true) {
             String texto = leerLinea(mensaje + " [" + actual + "]: ");
@@ -169,7 +157,6 @@ public class Teclado {
         }
     }
 
-    // Para modificar textos: si se deja vacío se queda el valor actual
     public static String leerTextoOpcional(String mensaje, String actual) {
         String texto = leerLinea(mensaje + " [" + actual + "]: ");
         if (texto.isEmpty()) {

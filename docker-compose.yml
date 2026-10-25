@@ -1,4 +1,3 @@
-# Levanta el servidor MariaDB y carga sql/bbdd.sql la primera vez que se crea
 services:
   bbdd:
     image: mariadb:11.4
